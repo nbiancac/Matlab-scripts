@@ -1,0 +1,180 @@
+<html>
+
+<head>
+<title>Options</title>
+<style>
+<!--
+span.mcode
+{ color: #ff0000;
+  font-family: 'Lucida Console', 'Andale Mono', 'Courier New', monospace;
+}
+h3 { color: #009988 }
+-->
+</style>
+
+</head>
+<body>
+
+<img src="../images/plt.png" width="300" height="160" align="right"></td>
+<br><h1>Options</h1> <br clear="left"><br><br><br><br>
+
+<table border="1" cellpadding="8" cellspacing="0" bordercolor="#b0b0b0" width="100%">
+
+  <tr>
+    <td valign="top"> <h3>HelpFile</h3> </td>
+    <td> <span class="mcode">plt(...,'HelpFile','filename');</span> Specifies the <i>left</i> click actions of the Help tag:
+        <br><br>
+         If the filename is specified with complete path information
+         the helpfile will be read from the specified location. If no path information
+	 is included, plt looks for this file on the Matlab path (except for compiled
+	 applications in which case plt looks for the file in the same folder that
+	 contains the executable). The file extension 
+         must be included in the filename string since the extension determines which
+	 application is used to open the help file. The extension may be
+         <span class="mcode">.html</span>, <span class="mcode">.pdf</span>, or
+	 <span class="mcode">.chm</span>, or any file type that your operating system
+	 knows how to open. (Usually chm files are only supported on PC systems.) Assuming the
+	 help file is found, it will be opened when you left click on the help tag.
+	 If this parameter is not included, left clicking on the help tag will open
+	 the default plt help file (<span class="mcode">plt.chm</span> on Windows systems
+	 and the file <span class="mcode">plt.htm</span> otherwise).
+      </td>
+   </tr>
+   <tr>
+      <td valign="top"> <h3>HelpFileR</h3> </td>
+      <td> <span class="mcode">plt(...,'HelpFileR','filename');</span> Specifies the <i>right</i> click actions of the Help tag:
+      <br><br>
+         The rules for finding the help file are the same as described
+	 above for the <span class="mcode">HelpFile</span> parameter. Assuming the
+	 help file is found, it will be opened when you right click on the help tag.
+	 If this parameter is not included, right clicking on the help tag will open
+	 the default plt help file.
+	 Often the help tag left click will be used for help on the plt plotting package
+	 and the right click will be used for help on the currently running program.
+	 Or the roles of left and right clicks may be reversed. The demo program
+	 <span class="mcode">demo\plt50.m</span> gives an example of using the
+	 <span class="mcode">HelpFileR</span> tag.</td>
+    </tr>
+    </td>
+  </tr>
+  <tr>
+    <td valign="top"> <h3>Options</h3> </td>
+    <td> <span class="mcode">plt(...,'Options',s);</span><br>
+    s is a string specifying one or more options. The options allowed are:
+    <table border="1" cellpadding="8" cellspacing="0" vspace="8" bordercolor="#9999ff">
+      <tr>
+        <td><span class="mcode">'Ticks'</span></td>
+        <td>Use tick marks (i.e. no grid lines)</td>
+      </tr>
+      <tr>
+        <td><span class="mcode">'Menu'</span></td>
+        <td>Enable the figure menu bar</td>
+      </tr>
+      <tr>
+        <td><span class="mcode">'xView'</span></td>
+        <td>Enable the xView slider</td>
+      </tr>
+
+      <tr>
+        <td><span class="mcode">'Slider'</span></td>
+        <td>Enable the x-axis control slider</td>
+      </tr>
+      <tr>
+        <td><span class="mcode">'Xlog'</span></td>
+        <td>use logarithmic scaling on the x axis</td>
+      </tr>
+      <tr>
+        <td><span class="mcode">'Ylog'</span></td>
+        <td>use logarithmic scaling on the y axis</td>
+      </tr>
+      <tr>
+        <td><span class="mcode">'multiCur'</span></td>
+        <td>Enable the multiCursor</td>
+      </tr>
+
+      <tr>
+        <td><span class="mcode">'Nocursor'</span></td>
+        <td>Tells plt to hide all cursor objects. They may be re-enabled with the command:<br>
+	<span class="mcode">plt('cursor',get(gca,'user'),'set','visON');</span></td>
+      </tr>
+      <tr>
+        <td><span class="mcode">'Hidden'</span></td>
+        <td>Tells plt to exit with the plot figure window hidden.</td>
+      </tr>
+      <tr>
+        <td><span class="mcode">'Linesmoothing'</span></td>
+        <td>Tells plt to use Matlab's line smoothing algorithm (anti-aliasing) for all traces.
+	The line smoothing property may also be controlled from the cursor button group which is described
+	in the <a href="../Using%20the%20plt%20window/Cursoring.htm">Cursoring</a> section. That section
+	includes important details about the line smoothing property.
+	</td>
+      </tr>
+      <tr>
+        <td><span class="mcode">'-Help'<br>'+Help'</span></td>
+        <td>removes/adds the Help tag from the menu box</td>
+      </tr>
+      <tr>
+        <td><span class="mcode">'-Mark<br>'+Mark'</span></td>
+        <td>removes/adds the Mark tag from the menu box</td>
+      </tr>
+      <tr>
+        <td><span class="mcode">'-Xlog'<br>'+Xlog'</span></td>
+        <td>removes/adds the LinX/LogX tag from the menu box</td>
+      </tr>
+      <tr>
+        <td><span class="mcode">'-Ylog'<br>'+Ylog'</span></td>
+        <td width="469">removes/adds the LinY/LogY tag from the menu box</td>
+      </tr>
+      <tr>
+        <td><span class="mcode">'-Print'<br>'+Print'</span></td>
+        <td>removes/adds the Print tag from the menu box</td>
+      </tr>
+      <tr>
+        <td><span class="mcode">'-Grid'<br>'+Grid'</span> </td>
+        <td>removes/adds the Grid tag from the menu box</td>
+      </tr>
+      <tr>
+        <td><span class="mcode">'-Figmenu'<br>'+Figmenu'</span></td>
+        <td>removes/adds the Menu tag from the menu box</td>
+      </tr>
+      <tr>
+        <td><span class="mcode">'-Rotate'<br>'+Rotate'</span></td>
+        <td>removes/adds the XYrotate (XY<font face="Times New Roman">&#8596;) tag from the menu box</font></td>
+      </tr>
+      <tr>
+        <td width="225"><span class="mcode">'-All'<br>'+All'</span></td>
+        <td>removes /adds all menu box items</td>
+      </tr>
+    </table>
+    These options strings are case sensitive and in fact only the capital letters are significant.
+    You can add whatever lower case letters, spaces and other delimeters that you want to make
+    the string more readable. For example suppose you wanted the display to initialize with the
+    menu bar and multiCursor enabled and the grid lines off. Any of these commands would achieve that goal:
+    <span class="mcode"><br>
+&nbsp;&nbsp; plt(...,'Options','Menu','Options','multiCur, Ticks');<br>
+&nbsp;&nbsp; plt(...,'Options','Menu multiCursor Ticks');<br>
+&nbsp;&nbsp; plt(...,'Options','MCT');<br>
+&nbsp;&nbsp; plt(...,'Options','M.C.T');</span><br>
+    In addition to those options, suppose you wanted to remove the "Grid" tag from the menuBox.
+    Then we would use something like one of the following:<br><span class="mcode">
+&nbsp;&nbsp; plt(...,'Options','Menu Cur Tick -Grid');<br>
+&nbsp;&nbsp; plt(...,'Options','MCT-G');</span><br>    
+    
+    You can also use a plus sign on the menu box tags if you would rather specify
+    which tags to include instead of which tags to remove.
+    For example, both of the following commands would remove all the menu box 
+    items except for the x and y axis lin/log controls:<br>
+    <span class="mcode">&nbsp;&nbsp; plt(...,'Options','-H-M-G-F');</span><br>
+    <span class="mcode">&nbsp;&nbsp; plt(...,'Options','+X+Y');<br>
+    </span>Note that the Print menu box tag is unique in that it is off by 
+    default and will only appear when<span class="mcode"> +P</span> appears in 
+    the Options string. If you remove all menu box items (i.e.&nbsp;
+    <span class="mcode">'Options','-A'</span>), the box outline is not 
+    displayed as well.<br>
+    </td>
+  </tr>
+  </table>
+
+</body>
+
+</html>

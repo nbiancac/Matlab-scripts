@@ -1,0 +1,420 @@
+<FONT FACE="Arial" SIZE=9><b>winplt &nbsp;</b></FONT>
+<FONT FACE="Arial" SIZE=5>(version 15-Oct-14)</FONT>
+<br><br>
+<FONT COLOR="#FF0000" FACE="Lucida Console" SIZE=4>
+&nbsp; &nbsp; &nbsp; &nbsp; Author: Paul Mennen<br>
+&nbsp; &nbsp; &nbsp; &nbsp; Email:&nbsp; paul@mennen.org
+</FONT>
+<br>
+<h1>Overview</h1>
+
+Struggling with Matlab's FFT window display tool (wintool), I found
+it cumbersome and limited. I wanted a way to quickly change window
+parameters and see the effect on the time and frequency shapes and
+the most common window measures (scalloping and processing loss,
+frequency resolution, and equivalent noise bandwidth). I couldn't
+modify wintool for my taste since most of the code was hidden (pcode).
+So I wrote winplt.m to create a more useable gui for displaying
+windows. (To start it just type winplt - with no arguments.)
+You can also use winplt's command line interface to return the window
+time shapes for use in your Matlab programs.
+Winplt is also a great example of gui programing using the
+plt plotting tool, however if you are just getting started with gui
+programming I would recommend starting first with one of the shorter
+examples in the plt\demo folder.
+<br><br>
+Thirteen of the windows are defined by Matlab functions contained in
+the signal processing toolbox. If that toolbox is not installed
+you will see a warning that the function is not defined. (A boxcar
+window is returned in that case). Seventeen of the windows are defined
+in terms of a convolution kernel. Those windows (and the user defined
+windows) will work correctly without any toolboxes installed.
+<br><br>
+If you know of some FFT windows I have not included, feel free to let
+me know about them, and I will add them to the next release. Or if you
+want to keep them secret, you will find it easy to add them to winplt
+yourself. Also feel free to suggest new features. (You can always
+reach me at the email address shown above).
+<br><br>
+<H1>Command-line interface</H1>
+
+<FONT COLOR="#0000FF" FACE="Lucida Console"><b>winplt(id,points)</b></FONT> <br>
+   The first parameter (id) refers to one of the 31 windows listed below,
+   although the last two are user defined windows and can only be used from
+   the gui interface.
+   A column vector is returned
+   (of length <FONT FACE="Lucida Console"><b>points</b></FONT>)
+   containing the amplitude corrected window time shape. Amplitude correction
+   means that the average value is one, i.e.:<br>
+   <FONT FACE="Lucida Console"> &nbsp; &nbsp; sum(winplt(id,points)) = points</FONT>
+
+<br><br> <FONT COLOR="#0000FF" FACE="Lucida Console"><b>winplt(id,points,1)</b></FONT> <br>
+   Same as above except that the window is scaled using power correction. This
+   means that the average value of the square of the window is one, i.e.:<br>
+   <FONT FACE="Lucida Console"> &nbsp; &nbsp; sum(winplt(id,points,1).^2) = points</FONT>
+
+<br><br> <FONT COLOR="#0000FF" FACE="Lucida Console"><b>winplt(id,points,pwr,opt)</b></FONT><br>
+   &nbsp; &nbsp; &nbsp; <FONT FACE="Lucida Console"><b>id: &nbsp; &nbsp; </b></FONT>
+              An index specifying one of the FFT windows<br>
+   &nbsp; &nbsp; &nbsp; <FONT FACE="Lucida Console"><b>points: </b></FONT>
+              The number of points in the time window to be generated<br>
+   &nbsp; &nbsp; &nbsp; <FONT FACE="Lucida Console"><b>pwr:&nbsp; &nbsp; </b></FONT>
+              0 = amplitude correction, 1 = power correction  (default = 0)<br>
+   &nbsp; &nbsp; &nbsp; <FONT FACE="Lucida Console"><b>opt: &nbsp;&nbsp; </b></FONT>
+              optional window parameter (used only for windows 1 thru 5 and 11)
+   <br>
+   This is the most general form of the winplt call.
+   The return value is a column vector to be consistent with the Matlab window functions.
+   Window id's 14 and 15 both return exactly the same Blackman window using different
+   implementations (a good check that the code is correct).
+
+<br><br> <FONT COLOR="#0000FF" FACE="Lucida Console"><b>[name, kernel] = winplt(id)</b></FONT> <br>
+   Returns the name of the window associated with the specified id number (0 to 31)
+   The second output argument (if given) will contain the convolution
+   kernel. For windows not defined by a kernel the Matlab function
+   used to compute it is returned, along with the window parameters.
+
+<br><br> <FONT COLOR="#0000FF" FACE="Lucida Console"><b>winplt(-2)</b></FONT> <br>
+   Returns a cell array containing all names of the defined windows.
+
+<br><br> <FONT COLOR="#0000FF" FACE="Lucida Console"><b>winplt(-1)</b></FONT> <br>
+   Displays a list of all windows and their id codes, which will look as follows:<br>
+<FONT COLOR="#FF0000" FACE="Lucida Console">
+<br> &nbsp; &nbsp; ID 00:  Boxcar
+<br> &nbsp; &nbsp; ID 01:  Hanning/Rife Vincent
+<br> &nbsp; &nbsp; ID 02:  Chebyshev
+<br> &nbsp; &nbsp; ID 03:  Kaiser
+<br> &nbsp; &nbsp; ID 04:  Gaussian
+<br> &nbsp; &nbsp; ID 05:  Tukey
+<br> &nbsp; &nbsp; ID 06:  Bartlett
+<br> &nbsp; &nbsp; ID 07:  Modified Bartlett-Hanning
+<br> &nbsp; &nbsp; ID 08:  Bohman
+<br> &nbsp; &nbsp; ID 09:  Nuttall
+<br> &nbsp; &nbsp; ID 10:  Parzen
+<br> &nbsp; &nbsp; ID 11:  Taylor
+<br> &nbsp; &nbsp; ID 12:  Hamming
+<br> &nbsp; &nbsp; ID 13:  Exact Blackman
+<br> &nbsp; &nbsp; ID 14:  Blackman
+<br> &nbsp; &nbsp; ID 15:  Blackman (Matlab)
+<br> &nbsp; &nbsp; ID 16:  Blackman Harris (Matlab)
+<br> &nbsp; &nbsp; ID 17:  Blackman Harris 61dB
+<br> &nbsp; &nbsp; ID 18:  Blackman Harris 67dB
+<br> &nbsp; &nbsp; ID 19:  Blackman Harris 74dB
+<br> &nbsp; &nbsp; ID 20:  B-Harris 92dB (min 4term)
+<br> &nbsp; &nbsp; ID 21:  Potter 210
+<br> &nbsp; &nbsp; ID 22:  Potter 310
+<br> &nbsp; &nbsp; ID 23:  FlatTop  (5 term)
+<br> &nbsp; &nbsp; ID 24:  FlatTop&nbsp 41dB (Potter 201)
+<br> &nbsp; &nbsp; ID 25:  FlatTop&nbsp 60dB (Potter 301)
+<br> &nbsp; &nbsp; ID 26:  FlatTop&nbsp 85dB (Potter 401)
+<br> &nbsp; &nbsp; ID 27:  FlatTop&nbsp 98dB (Mennen 501)
+<br> &nbsp; &nbsp; ID 28:  FlatTop 101dB (Mennen 601)
+<br> &nbsp; &nbsp; ID 29:  FlatTop  (Matlab)
+<br> &nbsp; &nbsp; ID 30:  adjust kernel
+<br> &nbsp; &nbsp; ID 31:  user<br><br>
+</FONT>
+
+<H1>Graphical interface</H1>
+
+To start the winplt graphical interface, simply type
+<FONT COLOR="#0000FF" FACE="Lucida Console"><b>winplt</b></FONT> at the
+Matlab command prompt (i.e. with no arguments). This opens a window
+similar to this:
+<br><br>
+<img src="taylor.png"></p>
+
+The solid green line is the frequency shape of the selected window
+and the dashed green line is the time domain view.
+<br><br>
+
+<img src="help.png" hspace=10 align=left>
+Click on the <FONT FACE="Lucida Console"><b>HelpP</b></FONT> tag
+(near the lower left corner of the figure) to bring up the plt help file
+plt.chm on Windows PC systems, and plt.htm otherwise. This is where you can find
+instructions for zooming and panning the display, enabling traces, using the cursors and menus, etc.
+<br><br>
+When you click on the <FONT FACE="Lucida Console"><b>HelpW</b></FONT>
+tag on PC Windows based systems the same plt.chm help file will appear as
+when you clicked on the "HelpP" tag, however the help system will be initialized
+so that the page describing winplt.m (that you are currently reading) will be
+selected. On non-Windows systems, the HelpW tag will open winplt.htm in the browser.
+<br clear="left"> <br>
+
+<img src="popup.png" hspace=10 align=left>
+Use the popup control (the large yellow text just above the plot)
+to select one of 31 different windows - including most windows mentioned
+in the literature and a few that I invented.
+Left clicking on this control brings up the menu shown here with the currently
+selected window highlighted. Simply click on the window you want to look at.
+Alternatively, you may right click on this control and the window selection
+will change to the next window in the sequence (ordered by the window ID).
+When you select a window defined by a convolution kernel, that kernel appears
+in the far upper right corner of the figure window.
+<br clear="left"> <br>
+
+<img src="bins.png" hspace=10 align=left>
+Use the number of bins slider to control how many fft bins to plot
+on either side of the center.
+<br clear="left"> <br>
+
+
+<img src="param.png" hspace=10 align=left>
+For these window types (as well as Rife Vincent below), an additional slider
+appears to the left of the # of bins slider. Note that the slider name as
+well as the upper and lower slider limits change depending on the window
+selected. As soon as you move the slider, the plot will be updated
+to reflect the changed parameter.
+<br clear="left"> <br>
+
+<img src="rife.png" hspace=10 vspace=8 align=left>
+Window ID 01 (Hanning/Rife Vincent) is unique in that the parameter slider
+controls the number of times that the Hanning window is applied. So select 
+<FONT COLOR="#0000FF" FACE="Lucida Console"><b>1</b></FONT>
+to get the traditional Hanning window (the most popular of all windows), and select
+<FONT COLOR="#0000FF" FACE="Lucida Console"><b>5</b></FONT>
+to get the Hanning window applied 5 times (which is sometimes referred to as
+the Rife Vincent 5 window). Note that if you set the parameter to zero, the
+Hanning window is applied zero times which is equivalent to the
+boxcar or rectangular window (ID=0).
+In the example shown in this picture, the
+Rife Vincent 3 window was selected. Note that the Rife Vincent 3 kernel is shown as:<br>
+<FONT FACE="Lucida Console"><b>
+[-.05 .3 -.75&nbsp; 1 -.75 .3 -.05]</b></FONT>
+If we divide by the 1st term and take the absolute value we get:<br>
+<FONT FACE="Lucida Console"><b>
+[&nbsp; 1 &nbsp; 6 &nbsp; 15&nbsp; 20&nbsp; 15&nbsp; 6 &nbsp; 1 ]</b></FONT>
+which you may recognize as the 6th row of Pascal's triangle.
+<br clear="left"> <br>
+
+<img src="scallop.png" hspace=10 align=left>
+Whenever a new window is selected, or when any window parameters are
+changed, these four window characteristics are computed and displayed
+in the upper left corner of the plotting area. Green text is used to indicate
+that the data is associated with the first two traces (also in green):
+<br clear="left">
+<ol>
+<li><FONT COLOR="#0000FF" SIZE=+1 <b>
+Scalloping loss (dB):
+</b></FONT>
+    A measure of the uncertainty of the amplitude
+    measurement due to the non-flatness of the frequency shape.
+    It's computed as the difference between the maximum and minimum
+    values of the frequency response between -.5 and +.5 bins.
+</li>
+<li><FONT COLOR="#0000FF" SIZE=+1 <b>
+6dB bandwidth (bins):
+</b></FONT>
+    A measure of frequency resolution. Indicates how precisely one can
+    estimate the frequency of an input tone. A window with a wider main
+    lobe will have a larger 6dB bandwidth and less certainty in the
+    frequency measurement.
+</li>
+<li><FONT COLOR="#0000FF" SIZE=+1 <b>
+Equivalent Noise Bandwidth (bins):
+</b></FONT>
+    With white noise as an input, the enbw is the width of an ideal
+    rectangular filter which would accumulate the same noise power as
+    that obtained from the output of the window.
+    The processing loss is equal to the square
+    root of the enbw. For example if enbw = 2 bins, processing loss = 3dB.
+</li>
+<li><FONT COLOR="#0000FF" SIZE=+1 <b>
+Worst Case Processing loss (dB):
+</b></FONT>
+    This is the sum of the processing loss in dB (10*log10(enbw)) and
+    the scalloping loss.
+</li></ol>
+<br clear="left">
+<img src="tidbox.png" hspace=10 align=left>
+Winplt remembers the previous two frequency and time shapes displayed.
+These stored traces make it easy for you to compare two or three
+different window types, or to compare up to three windows of the same
+type but using a different parameter value. By default, only the first
+two traces are enabled showing the you the frequency and time shapes
+respectively of the currently selected window. The next two traces
+(shown in blue on the plot as well as in the TraceID box) show the
+window that was selected previously to the current one. Note that the
+TraceIDs are in italics indicating that the trace is disabled. Simply
+click on the TraceID to change it to a bold font and enable the trace
+on the display. (You can't do this until you have selected at least one
+other window, since otherwise there is no meaning to "previously selected".)
+Likewise, the last two traces (shown in red) show the "previous previous"
+window. If you don't know what that means, read the example situation below:
+<br clear="left"> <br>
+Suppose you select these three windows, in this order, using the popup control:
+<ul>
+<FONT COLOR="#0000FF" FACE="Lucida Console"><b>
+<li> 12:  Hamming          </li>
+<li> 23:  FlatTop (5 term) </li>
+<li> 21:  Potter 210       </li>
+</ul>
+</b></FONT>
+The trace ID box will then have trace labels as shown in the above picture.
+The first trace will show the frequency shape of the Potter 210 window
+(since that is the window currently selected) and its trace ID will
+be "Freq21". The third trace will have an ID of "Freq23" and if
+enabled will show the 5 term FlatTop frequency shape since that was the
+shape previously shown. The fifth trace will have an ID of "Freq12"
+and if enabled will show the Hamming frequency shape since that was
+the shape "previously, previously" shown. The 2th, 4th, and 6th traces
+will display the time traces associated with the frequency plots just
+mentioned. If you need to compare more than 3 different windows at once, the
+easiest option is to start multiple copies of the winplt application.
+<br><br>
+
+Note that when either of the blue traces is enabled (Freq23/Time23 in the
+above example) the four window characteristics of the previous window are
+also displayed on the right side of the graph. This is shown in blue to remind
+you that it is associated with the trace of the same color (i.e. traces 3 and 4).
+This second set of text strings for the previous window makes it easy to compare
+these characteristics between two windows. And again if you need to quickly
+compare these numbers for more than two windows, just open multiple copies of winplt.
+<br><br>
+
+<img src="pwrcorrect.png" hspace=10 align=left>
+On the right side of the graph (above the right axis label) is a
+checkbox called "power corrected". When checked (as it is by default)
+the time trace is power corrected. When this checkbox is unchecked,
+the time trace is amplitude corrected. The meanings of power and amplitude
+correction are described above in the command-line interface section.
+<br clear="left"><br>
+
+<img src="id30.png" hspace=10 align=left>
+The simplest way to experiment
+with your own window designs is to first
+select one of the kernel based windows that most resembles the window
+you want. (Those are the windows that have the kernel displayed above
+the window name, including IDs 1,12,13,14, and 17 through 28). Then when
+you switch to ID 30 (adjust kernel) you can modify the selected kernel
+element by using the slider labeled "Parameter". (The selected kernel
+element is indicated by bold text and is surrounded by parentheses).
+At first the last (right most) kernel element will be selected as shown
+in this figure. To select a different kernel element simply click anywhere
+on the kernel list and the selected element will move one position to the
+left (in a circular fashion). If you want to enter a particular number
+for the selected kernel element, just type that number into the parameter slider
+edit box. Usually however you will want to use the slider arrows to
+adjust the value. Clicking on the slider right / left arrows will
+increase / decrease (respectively) the kernel value by one part in
+2000 (i.e. by 0.05%). You can change the increment factor by entering
+a value of 100 or greater into the slider edit box. For example to set
+the increment factor to 1 part in 10,000 (i.e. 0.01%) just enter "1e4"
+into the parameter slider. Clicking in the trough area of the parameter
+slider changes the kernel element by 10 times as much as for the slider
+arrows. Note that the frequency and time domain plots instantly update
+every time the selected kernel element is modified. This instant feedback
+may allow you to get a feel for how you want to modify the kernel, but
+even with this feedback it is difficult for all but the shortest kernels.
+<br clear="left"><br>
+
+<img src="id30popup.png" hspace=10 align=left>If you right click anywhere on
+the kernel, instead of moving left as you get with the left click you will see
+this popup selection. The first two selections (Move right/left) are not
+often useful since it is faster to just use the left click method.
+The next two choices add or remove a kernel element respectively.
+There are two ways to save the kernel as you currently have modified it.
+The first method "Save" simply saves the kernel to temporary memory (which
+will be lost when you close winplt.m. (Selecting "Revert" restores the kernel
+from this temporary memory). To save the kernel in a more permanent way, select
+the choice "Write winplt.mat" which will save the kernel in the same folder
+containing winplt.m with the indicated file name. This kernel is reloaded
+when you click on the "Load winplt.mat" selection. You will find both methods
+of saving the current kernel useful as you explore the effects of modifying
+each element while searching for the desired characteristics. The last choice
+is for closing the menu if it was selected inadvertently.
+<br clear="left"><br>
+
+<img src="id31.png" hspace=10 align=left>
+To display your own window design based on a convolution kernel, the
+selection above (ID=30) is usually the easiest. But if you don't want
+to be limited to that design technique, you can display your own window
+designed in a completely general way by selecting the last window type
+in the popup control
+<FONT FACE="Lucida Console"><b> (ID&nbsp;31:&nbsp;user)</b></FONT>.
+The current user function string will then appear directly above the popup control.
+If you haven't entered such a string yet, the default userwin string
+is shown which is simply
+<FONT COLOR="#0000FF" FACE="Lucida Console"><b> userwin(points,param)</b></FONT>.
+If you don't have a function named userwin on your Matlab path, then you will
+also get the undefined function error message shown in this picture. Any other
+errors encountered when winplt is computing the user defined window will also
+appear in this location.
+<br><br>
+The easiest way to display your own window definition is to create a Matlab file called
+<FONT COLOR="#0000FF" FACE="Lucida Console"><b> userwin.m</b></FONT>
+containing a function of your own design called userwin with two input
+arguments and a single output argument. The first argument is the number of
+time points to return and the second argument is a window parameter.
+(It's easiest to include the 2nd argument in the calling sequence even if you
+don't need a window parameter. That way there is no need to modify the userwin string.)
+And of course the output argument is the returned time window which normally
+will be a vector of the length specified by the first input argument.
+<br><br>
+If you want to modify the user function string, just click on it.
+The string will change colors to indicate "edit mode" and an underline
+cursor will appear. The left/right arrow keys and the delete/backspace
+keys will work as expected as you are editing the string.
+<br><br>
+For simple functions, you can enter the computation itself as the userwin
+string. For example, to display a triangular window, enter this as the
+userwin string:<br>
+
+<FONT FACE="Lucida Console"><b>[1:2:points  points:-2:1]</b></FONT><br>
+
+You don't have to worry about whether the result is a row or a column
+since winplt will convert it to a column either way. In fact you don't
+even have to get the size correct since winplt will truncate or zero
+pad it to make it the correct length (i.e. "points").
+
+One thing you can use the user string for is to combine windows in various
+ways. For example, try entering something like:<br>
+<FONT FACE="Lucida Console"><b>chebwin(points,param) + winplt(27,points)</b></FONT><br>
+In response, winplt will compute a new window which is the sum of the Chebyshev
+window and the Mennen 501 FlatTop window (ID 27). Note that the parameter slider
+value will be used in the Chebyshev portion since it includes the string "param"
+which gets replaced with the current value of the slider. Note that the
+string "points" must be used to indicate the number of points in the returned
+window function. The adjustable parameter can be used in many other ways in the
+userwin function. One example is to use it as a weighting between two predefined
+window functions as in this user string:<br>
+
+<FONT FACE="Lucida Console"><b>
+winplt(21,points)*param + winplt(22,points)*(100-param)</b></FONT><br>
+This will create a user window identical to ID 21 when the parameter
+slider is at 0 and identical to ID 22 when the slider is
+at 100. (In between of course it will be a mixture of the two.)
+
+You could also use the user window to display one of the standard
+winplt window selections, but with a different choice of parameters.
+For example, suppose you want to show the taylor window with nbar=8 instead of the
+nbar=5 used by window ID 11. Note that taylorwin (from the signal processing toolbox)
+is defined as follows: function w = taylorwin(points,nbar,dBsidelobes).
+So suppose we enter the following user string:<br>
+
+<FONT FACE="Lucida Console"><b>taylorwin(points,8,-abs(param))</b></FONT><br>
+Winplt will then show the taylor window with the nbar parameter set to 8.
+The sidelobe level will be controlled by the parameter slider.
+Since taylorwin expects the sidelobe level expressed in dB as a negative number,
+the negative absolute value was used to avoid the error message that would
+otherwise result when the parameter slider is moved to a positive number.
+If instead of changing the sidelobe level, you wanted to see the effect of
+changing the nbar parameter with the sidelobe level set to -90dB you would enter:<br>
+<FONT FACE="Lucida Console"><b>taylorwin(points,param,-90)</b></FONT>
+
+<h1>Notes</h1>
+<ol>
+<li>Matlab's window functions return windows with a normalized scaling
+(i.e. with a max value of one), although that type of scaling has little
+use in spectral analysis. Using winplt, you can compute a normalized
+window as follows:<br>
+   <FONT FACE="Lucida Console">
+   &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; w = winplt(id,points);<br>
+   &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; w = w/max(w);<br>
+   </FONT>
+</li>
+<li>
+You will notice that for some of the flat top windows, the
+sum(winplt(id,points)) is slightly less than points. This is on purpose,
+and is done to minimize the scalloping loss. The scaling for the power
+corrected windows is always exact however.
+</li>

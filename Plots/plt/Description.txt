@@ -1,0 +1,36 @@
+--- plt version 13Mar15 ---
+
+plt provides a framework for developing graphical user interfaces
+that include 2D plotting. The important pieces of this framework are:
+
+1. A plotting interface that is an alternative
+   to Matlab's plot and plotyy routines
+2. Several pseudo objects (collections of Matlab
+   graphical objects with a single purpose)
+3. A methodology for combining these elements presented
+   using a series of examples and demo programs.
+
+Like plot, plt commands can be typed at the command prompt to display
+your workspace arrays, and for simple commands the interface is the
+same. However the similarities end with the optional parameters.
+Perhaps the most significant advantage of plt over plot is the
+consistency and flexibility of the command line interface, all  
+explained in a single document with example code for every important
+option. Never again will you have to hunt for the many obscure handle
+graphics commands scattered throughout the Matlab documentation.
+Other advantages of plt over plot include:
+
+1.  Optimized for data exploration
+2.  Improved zooming, panning, linear/log toggling, & auto-scaling controls
+3.  Interactive selection of variables to plot (i.e. workspace plotting)
+4.  Automatically generates a legend that includes trace selection controls
+5.  Fast cursor movement with delta, rms, mean, y/x, & magnitude readouts
+6.  Support for dual y-axes & sub-plots, each with individual cursor controls
+7.  Peak/Valley finder, expansion history, and support for metric prefixes
+8.  Better looking grid lines with selectable color
+9.  Interactive editing of trace properties, figure colors, and annotations
+10. Up to 99 traces on a single axis (even more if a legend isn't needed)
+11. Data editing (both mouse and keyboard driven)
+12. Pseudo objects included: slider, popup, edit, color picker, cursor, grid
+13. Regular updates based on user suggestions
+14. Tested & verified with all Matlab releases from 12.1 (ver 6.1) to R2014b
