@@ -1,15 +1,6 @@
 function LHC=LHC_param(E0,E,scenario)
-
-% if (E==7e12); V=16e6;Estr='7TeV';taub_full=1.e-9; % full length in s
-% elseif (E==6.5e12); V=16e6;Estr='6p5TeV';taub_full=1.e-9; % full length in s
-% elseif (E==4e12); V=12e6;Estr='4TeV';taub_full=1.25e-9; % full length in s
-% elseif (E==3.5e12); V=12e6;Estr='3p5TeV';taub_full=1.2e-9; % full length in s
-% elseif (E==450e9); V=6e6;Estr='450GeV';taub_full=1.3e-9; % full length in s
-% else
-%         disp('LHC energy not recognized take taub=1.25ns V=12 MV');
-%         V=12e6;Estr=[char(E/1e12),'TeV'];taub_full=1.25e-9; % full length in s
-% end
-%         
+% parameters for the LHC
+% 04-06-2015: the bunch length has been changed to 9cm from 7.5cm as delivered from the injectors.        
 
 
 LHC={};
@@ -21,7 +12,7 @@ if E==7e12
         LHC.Estr='7TeV';
         LHC.Nb=1.15e11;
         LHC.M=2808;
-        LHC.sigmaz=7.55e-2; % rms
+        LHC.sigmaz=9e-2; % rms
         LHC.V=16e6;
         LHC.scenario={scenario};
     end
@@ -30,8 +21,22 @@ elseif E==6.5e12
         LHC.Estr='6500GeV';
         LHC.Nb=1.15e11;
         LHC.M=2808;
-        LHC.sigmaz=7.55e-2; % rms
+        LHC.sigmaz=9e-2; % rms
         LHC.V=16e6;
+        LHC.scenario={scenario};
+    elseif strcmp(scenario, 'RF-MD-12MV')
+        LHC.Estr='6500GeV';
+        LHC.Nb=1.6e11;
+        LHC.M=1;
+        LHC.sigmaz=6e-2; % rms
+        LHC.V=12e6;
+        LHC.scenario={scenario};
+    elseif strcmp(scenario, 'RF-MD-6MV')
+        LHC.Estr='6500GeV';
+        LHC.Nb=1.6e11;
+        LHC.M=1;
+        LHC.sigmaz=6e-2; % rms
+        LHC.V=12e6;
         LHC.scenario={scenario};
     end
 elseif E==4e12
@@ -39,7 +44,7 @@ elseif E==4e12
         LHC.Estr='4000GeV';
         LHC.Nb=1.15e11;
         LHC.M=2808;
-        LHC.sigmaz=1.25*7.55e-2; % rms
+        LHC.sigmaz=1.25*9e-2; % rms
         LHC.V=12e6;
         LHC.scenario={scenario};
     end
@@ -48,7 +53,7 @@ elseif E==450e9
         LHC.Estr='450GeV';
         LHC.Nb=1.15e11*1.05;
         LHC.M=2808;
-        LHC.sigmaz=1.3*7.55e-2; % rms
+        LHC.sigmaz=1.3*9e-2; % rms
         LHC.V=6e6;
         LHC.scenario={scenario};
     end    
@@ -61,8 +66,8 @@ c=299792458;
 LHC.machine='LHC';
 LHC.h=35640; 
 LHC.gamma=E*e/E0;
-LHC.mom=LHC.gamma*LHC.beta*E0/c/(1);
 LHC.beta=sqrt(1.-1./(LHC.gamma^2));
+LHC.mom=LHC.gamma*LHC.beta*E0/c/(e/c); % momentum eV/c
 LHC.taub=LHC.sigmaz/LHC.beta/c; % rms bunch length
 LHC.circ=26658.883; % total circumference in m
 LHC.R=LHC.circ/(2.*pi); % machine radius
@@ -77,6 +82,8 @@ LHC.f0=c*LHC.beta/LHC.circ; % rev. frequency
 LHC.omega0=2.*pi*LHC.f0;
 LHC.omegas=LHC.Qs*LHC.omega0;
 LHC.dphase=0.; 
+LHC.betavx=LHC.R/LHC.Qx;
+LHC.betavy=LHC.R/LHC.Qy;
     
 end
 

@@ -9,7 +9,7 @@ if E==7e12
         HLLHC.Estr='7TeV';
         HLLHC.Nb=1.15e11;
         HLLHC.M=2808;
-        HLLHC.sigmaz=7.55e-2; % rms
+        HLLHC.sigmaz=8.1e-2; % rms
         HLLHC.V=16e6;
         HLLHC.scenario={scenario};
     elseif strcmp(scenario,'Oscar3cm')
@@ -23,7 +23,7 @@ if E==7e12
         HLLHC.Estr='7TeV';
         HLLHC.Nb=2.2e11;
         HLLHC.M=2748;
-        HLLHC.sigmaz=7.55e-2; % rms
+        HLLHC.sigmaz=8.1e-2; % rms
         HLLHC.V=16e6;
         HLLHC.scenario={scenario};
         HLLHC.en=2.5;
@@ -33,14 +33,14 @@ if E==7e12
         HLLHC.Estr='7TeV';
         HLLHC.Nb=2.2e11;
         HLLHC.M=2604;
-        HLLHC.sigmaz=7.55e-2; % rms
+        HLLHC.sigmaz=8.1e-2; % rms
         HLLHC.V=16e6;
         HLLHC.scenario={scenario};
     elseif strcmp(scenario,'HL-LHC 50ns')
         HLLHC.Estr='7TeV';
         HLLHC.Nb=3.5e11;
         HLLHC.M=1374;
-        HLLHC.sigmaz=7.55e-2; % rms        
+        HLLHC.sigmaz=8.1e-2; % rms        
         HLLHC.V=16e6;
         HLLHC.scenario={scenario};
     end

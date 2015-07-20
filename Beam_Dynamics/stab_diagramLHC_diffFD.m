@@ -7,8 +7,8 @@ function [stab,S0]=stab_diagramLHC_diffFD(gamma,epsnormx,epsnormy,plane, a,curre
 % - gamma: relativistic mass factor of the beam,
 % - epsnorm: normalized emittance (e.g. 3.75e-6 m at 7TeV),
 % - a: octupole matrix as [axxF, axxD; ayyF, ayyD; axyF, axyD];
-% - current_octF: current in the focusing octupoles (max is supposed to be 550A at 7TeV),
-% - current_octD: current in the defocusing octupoles (max is supposed to be 550A at 7TeV),
+% - current_octF: current in the focusing octupoles (max is supposed to be 550A at 7TeV i.e.  gamma=7.4605e+03),
+% - current_octD: current in the defocusing octupoles (max is supposed to be 550A at 7TeV i.e.  gamma=7.4605e+03)
 % (most beneficial situation when sign(current_octF)=-sign(current_octD) )
 
 % In output:
@@ -21,8 +21,8 @@ function [stab,S0]=stab_diagramLHC_diffFD(gamma,epsnormx,epsnormy,plane, a,curre
 current_max=550;
 
 beta=sqrt(1-1/gamma^2); % relativistic velocity factor
-F=current_octF/current_max*(7000/gamma); % reduction factor for the foc. octupole current
-D=current_octD/current_max*(7000/gamma); % reduction factor for the defoc. octupole current
+F=current_octF/current_max*(7460.5/gamma); % reduction factor for the foc. octupole current
+D=current_octD/current_max*(7460.5/gamma); % reduction factor for the defoc. octupole current
 
 eps1sigma = eval(['epsnorm',plane])/(beta*gamma);
 sigma = sqrt(eps1sigma);

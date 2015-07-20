@@ -24,6 +24,20 @@ elseif E==6.5e12
         LHC.sigmaz=9e-2; % rms
         LHC.V=16e6;
         LHC.scenario={scenario};
+    elseif strcmp(scenario, 'RF-MD-12MV')
+        LHC.Estr='6500GeV';
+        LHC.Nb=1.6e11;
+        LHC.M=1;
+        LHC.sigmaz=6e-2; % rms
+        LHC.V=12e6;
+        LHC.scenario={scenario};
+    elseif strcmp(scenario, 'RF-MD-6MV')
+        LHC.Estr='6500GeV';
+        LHC.Nb=1.6e11;
+        LHC.M=1;
+        LHC.sigmaz=7.12e-2; % rms
+        LHC.V=6e6;
+        LHC.scenario={scenario};
     end
 elseif E==4e12
     if strcmp(scenario,'Nominal LHC')
