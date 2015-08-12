@@ -1,12 +1,13 @@
-function [ploss,kloss]=power_loss(freq,Zlong,implength,machine,Pmax)
+function [ploss,kloss]=power_loss(freq,Zlong,machine)
               
 %%%%%%%%
 % Calculates power loss [W] and loss factor in [Ohm/C]
-% [ploss,kloss]=power_loss(freq,Zlong,implength,machine,Pmax)
-% for a Gaussian spectrum
+% [ploss,kloss]=power_loss(freq,Zlong,machine)
+% for a Gaussian spectrum up to 1% of magnitude of the spectrum  
+
 gamma=machine.gamma;
 circum=machine.circ;
-taub=machine.taub;
+taub=machine.taub; % 1 sigmaz in [s]
 Nb=machine.Nb;
 M=machine.M;
 e=1.6021e-19;
@@ -16,12 +17,27 @@ beta=sqrt(1-1/gamma^2);
 frev=beta*clight/circum;
 sigz=taub*clight;
 
-p=1:Pmax;
+nperc=1;
 omega=2*pi*freq;
 omega_rev=2*pi*frev;
+h=exp(-(omega.^2*taub^2));
+    omega_part=omega(omega>0);
+    h_part=h(omega>0);
+    [max_h,max_ind]=max(h_part);
+    omega_max=omega_part(max_ind);
+    h_part2=h_part(omega_part>omega_max);
+    omega_part2=omega_part(omega_part>omega_max);
+    [h_part2,ind]=unique(h_part2); % delete trailed zeros;
+    omega_part2=omega_part2(ind);
+    omega_extr=interp1(h_part2,omega_part2,nperc/100*max_h);
+    
+    Pmax=floor(omega_extr/(omega_rev*M)); % approx value for max intergation;
+
+p=1:Pmax;
+
 omega_sample=omega_rev*M*p;
 freq_sample=omega_sample/2/pi;
-powspec=exp(-(omega.^2*taub^2));
+powspec=h;
 
 Zlong_sample=interp1(omega,real(Zlong),omega_sample);
 powspec_sample=interp1(omega,powspec,omega_sample);
