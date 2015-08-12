@@ -18,7 +18,7 @@ function [stab,S0]=stab_diagramLHC_diffFD(gamma,epsnormx,epsnormy,plane, a,curre
 % from Elias Metral's Mathematica notebook "StabilityDiagramsForNicolas.nb",
 % June 10th, 2010.
 
-current_max=550;
+current_max=550; % at 7 TeV
 
 beta=sqrt(1-1/gamma^2); % relativistic velocity factor
 F=current_octF/current_max*(7460.5/gamma); % reduction factor for the foc. octupole current
@@ -78,7 +78,7 @@ switch distribution
 	rate=1e-15;
     S0=-5*aRB*eps1sigma;
     % gaussian distribution (as in Headtail)
-    q=10.^[-4:0.05:2.5];q=[-q(end:-1:1) q]+1j*rate;
+    q=10.^[-3:1/38:2];q=[-q(end:-1:1) q]+1j*rate;
 
 
     I1=(1-cRB-(q+cRB-cRB*q).*exp(q).* expint(q) + ...
@@ -91,5 +91,6 @@ switch distribution
 end
 
 stab=[deltaQcohRe sign(S0)*deltaQcohIm];
+stab=stab(2:end-1,:);
 
 end
