@@ -1,0 +1,51 @@
+function output_txt = aadDataTipText(obj,event_obj)
+% Custom text generation for AAD datatips
+
+% Identify the lineseries from the handle...
+lineH = get(event_obj, 'Target');
+hax = get(lineH, 'Parent');
+aad = getaddaxisdata(hax);
+
+lines = zeros(size(aad));
+lax   = zeros(size(aad));
+for i = 1:length(aad)
+    haad = aad{i};
+    lax(i) = haad(1);
+    lines(i) = haad(2);
+end
+
+%%
+lineidx = find(lines == lineH);
+chantext = [];
+if length(lineidx)
+    % It's put on one of the ADDAXIS lineseries..
+    thisAx = lax(lineidx);
+    YLChan = get(thisAx, 'YLim');
+    yLabPtr = get(thisAx, 'YLabel');
+else
+    yLabPtr = get(hax, 'YLabel');
+end
+    if ~isempty(yLabPtr)
+        chantext = sprintf('%i: %s', lineidx+1, get(yLabPtr, 'String'));
+    else
+        chantext = str2num(lineidx+1);
+    end
+end
+%% Transform Y Lims to get actual data at point
+YLAx = get(hax, 'YLim');
+pos = get(event_obj,'Position');
+% Inverse transform to original zoom location...
+OZYlim = getaddaxisdata(hax, 'OriginalZoomYLim');
+zoompts = (YLAx - OZYlim(1))/diff(OZYlim);
+
+% Transform to data position on alternate axis.
+ypt = pos(2);
+ypt = (diff(YLChan) *(pos(2) - YLAx(1))/diff(YLAx)) + YLChan(1);
+
+output_txt = {chantext, ['X: ',num2str(pos(1),4)],...
+    ['Y: ',num2str(ypt,4)]};
+
+% If there is a Z-coordinate in the position, display it as well
+if length(pos) > 2
+    output_txt{end+1} = ['Z: ',num2str(pos(3),4)];
+end
