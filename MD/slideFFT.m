@@ -5,7 +5,7 @@ function BBQ=slideFFT(BBQ,start_turns,end_turns,shift_turns,window_turns,method,
  end
  
 BBQ_fft=BBQ;
-
+BBQ_fft.time=BBQ_fft.time(start_turns:end_turns);
 BBQ_fft.turns=BBQ_fft.turns(start_turns:end_turns);
 BBQ_fft.data=BBQ_fft.data(start_turns:end_turns);
 L = window_turns; % width of window
@@ -15,6 +15,7 @@ BBQ_fft.turns=BBQ_fft.turns(1:end-del);
 BBQ_fft.data=BBQ_fft.data(1:end-del);
 N = length(BBQ_fft.data); 
 BBQ_fft.slide_turns=1:shift_turns:N-L;
+BBQ_fft.slide_time=BBQ_fft.time(BBQ_fft.slide_turns);
 
 freq_vec=[];
 amp_vec=[];
@@ -24,7 +25,7 @@ for ii=1:shift_turns:N-L
     BBQ_fft.data_table=BBQ_fft.data(ii:ii+L-1)';
 
     if strcmp(method,'NAFF')
-
+        disp(['performing NAFF on ',num2str(ii),'/',num2str(N-L),' windows of ',num2str(L),' turns']);
         [~,~,~,~,~,~,frespec,~]=freqan(BBQ_fft.data_table,nharm,'all');
 
         freq=reshape(frespec(1:end-nharm,3)',nharm, length(frespec(1:end-nharm,3))/nharm);
@@ -62,12 +63,14 @@ end
 
 if strcmp(method,'FFT')
     BBQ.FFT_slide_turns=BBQ_fft.slide_turns;
+    BBQ.FFT_slide_time=BBQ_fft.slide_time;
     BBQ.FFT_slide_data=BBQ_fft.data(BBQ_fft.slide_turns);
     BBQ.FFT_slide_tune=tune_vec;
     BBQ.FFT_freq=freq_vec;
     BBQ.FFT_amp=amp_vec;
 else
     BBQ.NAFF_slide_turns=BBQ_fft.slide_turns;
+    BBQ.NAFF_slide_time=BBQ_fft.slide_time;
     BBQ.NAFF_slide_data=BBQ_fft.data(BBQ_fft.slide_turns);
     BBQ.NAFF_slide_tune=tune_vec;
     BBQ.NAFF_freq=freq_vec;

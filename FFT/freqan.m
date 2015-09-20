@@ -1,6 +1,6 @@
 function [avetune,errtune,tunes,phaseadv,amplit,numturns,frespec,nkick] = freqan(data,nterms,cas)
 % FREQAN    : Refined Fourier analysis from turn-by-turn BPM data
-% Usage     : [avetune,errtune,tunes,phases,amplit,numturns]= freqan(data,nterm,cas), 
+% Usage     :  [avetune,errtune,tunes,phaseadv,amplit,numturns,frespec,nkick] = freqan(data,nterms,cas)
 % data      : BPM data matrix (each column a different BPM)
 % nterm     : scalar indicating the number of terms
 % cas       : string for indicating type of analysis 
@@ -53,6 +53,7 @@ dataend=data(shft,lastbpm);
 
 % get rid of "noisy" BPMs 
 data=[dataend data(:,goodbpms)];          
+% data=[data(:,goodbpms)];          
 
 % get strings with number of BPMs  
 numbpm=size(data,2)-1;

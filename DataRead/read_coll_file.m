@@ -1,4 +1,4 @@
-function [names1,gaps1,betx1,bety1,nsig1]=read_coll_file(filepath,type)
+function [names1,gaps1,betx1,bety1,nsig1]=read_coll_file(filepath,type,repeat)
 
 % reads collimator files for LHC and HLLHC and gives back name, gap and
 % beta functions:
@@ -39,9 +39,11 @@ function [names1,gaps1,betx1,bety1,nsig1]=read_coll_file(filepath,type)
         [names1,gaps1,betx1,bety1,nsig1]=deal(L{name_ind},L{gap_ind},L{betx_ind},L{bety_ind},nan.*ones(length(L{betx_ind}),1));
     end
     
-    [names1,ia2,ic2] = unique(names1,'stable');
-    [gaps1,betx1,bety1,nsig1]=deal(gaps1(ia2),betx1(ia2),bety1(ia2),nsig1(ia2));
-
+    if strcmp(repeat,'unique')
+        [names1,ia2,ic2] = unique(names1,'stable');
+        [gaps1,betx1,bety1,nsig1]=deal(gaps1(ia2),betx1(ia2),bety1(ia2),nsig1(ia2));
+    end
+    
     if ~strcmp(type,'all')
         index=(strfind(names1,char(type)));
         ind_coll=find(~cellfun(@isempty,index));

@@ -3,10 +3,11 @@ function S=S4P(dire,type)
 letto=importdata(dire);
 freq=letto.data(:,1);
 freq(isnan(freq))=[];
-SX1=(letto.data(:,2));
-SX2=((letto.data(:,4)));
-SX3=((letto.data(:,6)));
-SX4=((letto.data(:,8)));
+
+SX1=(letto.data(:,2).*exp(1i.*letto.data(:,3)*pi/180));
+SX2=(letto.data(:,4).*exp(1i.*letto.data(:,5)*pi/180));
+SX3=(letto.data(:,6).*exp(1i.*letto.data(:,7)*pi/180));
+SX4=(letto.data(:,8).*exp(1i.*letto.data(:,9)*pi/180));
 
 S11=SX1(1:4:end);
 S21=SX1(2:4:end);

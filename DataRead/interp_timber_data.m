@@ -7,14 +7,16 @@ function [D1_new,D2_new]=interp_timber_data(D1,D2,interp_index)
     
     if interp_index==1
         for ii=1:size(D2.data,2)
-            D2_new.data(:,ii)=interp1(D2.turns,D2.data(:,ii),D1.turns,'linear','extrap');
+            D2_new.data(:,ii)=interp1(D2.time,D2.data(:,ii),D1.time,'linear','extrap');
             D2_new.turns=D1.turns;
+            D2_new.time=D1.time;
             D1_new=D1;
         end
     elseif interp_index==2
         for ii=1:size(D1.data,2)
-            D1_new.data(:,ii)=interp1(D1.turns,D1.data(:,ii),D2.turns,'linear','extrap');
+            D1_new.data(:,ii)=interp1(D1.time,D1.data(:,ii),D2.time,'linear','extrap');
             D1_new.turns=D2.turns;
+            D1_new.time=D2.time;
             D2_new=D2;
         end
     end
