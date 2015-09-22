@@ -1,5 +1,6 @@
 function [Zeff,kick_f,omega_shifted,mat]=Zt_eff(freq,Z,machine,m,nx,type,particle,plane,spec,nperc)
 % function [Zeff,kick_f,omega_shifted,mat]=Zt_eff(freq,Z,machine,m,nx,type,particle,plane,spec,nperc)
+% requires changing machine.taub (not sensitive on machine.sigmaz that is recalculated)
 
 [e,m0,clight,E0]=particle_param(particle);
 taub=machine.taub;

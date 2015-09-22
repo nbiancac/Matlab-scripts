@@ -1,26 +1,29 @@
-addpath(genpath('/afs/cern.ch/user/n/nbiancac/scratch0/Matlab-scripts/'));
+% addpath(genpath('/afs/cern.ch/user/n/nbiancac/scratch0/Matlab-scripts/'));
+
+addpath(genpath('/home/nick/HDD/Work/Matlab-scripts'));
 
 % mainDir='/home/nick/HDD/Dropbox/CERN/MD/4254/';
-fill='4290';
+fill='29082015-ACdipole';
 mainDir=['/home/nick/HDD/Work/CERN/MD/LHC/2015/',fill,'/'];
 DataDir=[mainDir,'Data/'];
 ResultDir=[mainDir,'Result/'];
+CollDir=[DataDir,'Collimators/'];
 
 % machine parameters
 [~,~,~,E0]=particle_param('proton');
-machine=LHC_param(E0,6500e9,'Nominal LHC');
-
+machine=LHC_param(E0,450e9,'Nominal LHC');
+disp([char(machine.scenario),' @ ',machine.Estr])
 % beam and plane
-beam='1';
-plane='H';
-comment='1st'; % for BBQ
+beam='2';
+plane='V';
+comment=''; % for BBQ
 
 flagsave=0;
 
 disp(['Analysis for B',beam,plane,' on fill ',fill])
 %% Get BBQ raw
 
-typeBBQ='';
+typeBBQ='HS';
 if strcmp(typeBBQ,'HS')
     variable=['LHC.BQBBQ.CONTINUOUS_HS.B',beam,'_ACQ_DATA_',plane,comment];
 else
@@ -180,9 +183,9 @@ BSRT.eV=((BSRT.sigmaV).^2-BSRT.LSFV^2)/(BSRT.BETAV)*(machine.beta*machine.gamma)
 
 
 %% Get collimators
-
-L=dir([DataDir,'*B',beam,'*LVDT_GU.dat']);
-
+comment_scenario='Scan_TDI_closed/';
+L=dir([CollDir,comment_scenario,'*B',beam,'*LVDT_GU.dat']);
+%%
 Coll=[];
 
 for ii=1:length(L)
@@ -190,8 +193,7 @@ for ii=1:length(L)
     Coll(ii).data={};
     disp([L(ii).name]);
     namecoll=regexprep(L(ii).name,[{'_MEAS_LVDT_GU.dat'},{'TCTP'},{'TCSP.A4R6'},{'TCTV'}],[{''},{'TCT'},{'TCSG.4R6'},{'TCTVA'}]);
-    
-    [time,data]=read_timber_data([DataDir,variable,'.dat'],'yyyy-mm-dd HH:MM:SS.FFF');
+    [time,data]=read_timber_data([CollDir,comment_scenario,L(ii).name],'yyyy-mm-dd HH:MM:SS.FFF');
     Coll(ii).name=namecoll;
     Coll(ii).data=data;
     Coll(ii).time=time;
@@ -204,7 +206,19 @@ if strcmp(beam,'1')
     for ii=1:length(L)
         disp([L(ii).name]);
         namecoll=regexprep(L(ii).name,[{'_MEAS_LVDT_GU.dat'},{'TCTP'},{'TCSP.A4R6'},{'TCTV'}],[{''},{'TCT'},{'TCSG.4R6'},{'TCTVA'}]);
-        [time,data]=read_timber_data([DataDir,variable,'.dat'],'yyyy-mm-dd HH:MM:SS.FFF');
+        [time,data]=read_timber_data([CollDir,comment_scenario,L(ii).name],'yyyy-mm-dd HH:MM:SS.FFF');
+        Coll(mm+ii).name=namecoll;
+        Coll(mm+ii).data=data;
+        Coll(mm+ii).time=time;
+    end
+else
+    L=dir([CollDir,comment_scenario,'TCLIA.4L8_MEAS_LVDT_GU.dat']);
+    L=[L,dir([CollDir,comment_scenario,'TDI.4R8_MEAS_LVDT_GU.dat'])];
+    mm=length(Coll);
+    for ii=1:length(L)
+        disp([L(ii).name]);
+        namecoll=regexprep(L(ii).name,[{'_MEAS_LVDT_GU.dat'},{'TCTP'},{'TCSP.A4R6'},{'TCTV'}],[{''},{'TCT'},{'TCSG.4R6'},{'TCTVA'}]);
+        [time,data]=read_timber_data([CollDir,comment_scenario,L(ii).name],'yyyy-mm-dd HH:MM:SS.FFF');
         Coll(mm+ii).name=namecoll;
         Coll(mm+ii).data=data;
         Coll(mm+ii).time=time;
@@ -215,7 +229,9 @@ end
 %%
 CollDataDir=['/afs/cern.ch/user/n/nbiancac/ln_delphi/PYTHON_codes_and_scripts/LHC_impedance_and_scripts/Coll_settings/'];
 file1='LHC_ft_6.5TeV_B1.txt';
-[names1,gaps1,betx1,bety1,sigma1]=read_coll_file([CollDataDir,file1],'all');
+disp(['Making table with ',file1,' model.'])
+
+[names1,gaps1,betx1,bety1,sigma1]=read_coll_file([CollDataDir,file1],'all','nounique');
 
 count=0;
 for ii=1:length(names1)
@@ -251,7 +267,7 @@ swap_coll_file([CollDataDir,file1],[CollDataDir,'prova'],'Halfgap[m]', hg_vec)
 %% FBCT
 close all
 flagsave=0;
-flagwrite=0;
+flagwrite=1;
 flagshow='on';
 
 
@@ -551,7 +567,7 @@ end
 %% BSRT
 close all
 
-flagsave=1;
+flagsave=0;
 flagshow='on';
 
 index=filled_buckets;
@@ -859,7 +875,7 @@ BBQ=slideFFT(BBQ,start_turns,end_turns,shift_turns,window_turns,'NAFF',nharm);
 disp('Done!')
 %% Plot  
 
-flagsave=1;
+flagsave=0;
 
 showlines=0;
 Nline=0;
@@ -932,9 +948,9 @@ if flagsave
     hgexport(gcf,'',s,'applystyle',true);
     hgexport(gcf, [ResultDir,name,'.png'],s,'Format','png');  
 end
-
+%%
 figure(11)
-if flagsave
+if ~flagsave
     name=['waterfall_BBQ',typeBBQ,'_B',beam,plane,'_',comment];
     s=hgexport('readstyle','PRSTAB-10pt'); 
     hgexport(gcf,'',s,'applystyle',true);
@@ -1079,9 +1095,16 @@ flagshow='on';
 
 
 figure(111)
-plot(BBQ.turns,BBQ.data)
+plot(BBQ.time,BBQ.data); hold on
+N=20;
+xtime=linspace(BBQ.time(1),BBQ.time(end),N);
+set(gca,'xticklabel',datestr(xtime,'HH:MM'))
+set(gca,'xtick',(xtime))
+rotateticklabel(gca,90,8);
+axisxx(BBQ.turns,BBQ.data);
+
 %%
-BBQ.rise_turns=1:2.1e6; % window on BBQ
+BBQ.rise_turns=1:1e6; % window on BBQ
 BBQ.rise_time=BBQ.time(BBQ.rise_turns);
 BBQ.rise_data=BBQ.data(BBQ.rise_turns);
 figure(2)
@@ -1113,8 +1136,8 @@ if flagsave
     hgexport(gcf, [ResultDir,name,'.png'],s,'Format','png');
 end
 
-% fit with expponential
-f=ezfit(turns_2fit'/machine.f0,L_all_2fit','y(x)=b+a*exp((x)/tau); b=1e3; tau=100; a=1e6');
+%% fit with exponential
+f=ezfit(turns_2fit'/machine.f0,L_all_2fit','y(x)=b+a*exp((x)/tau); b=1e6; tau=10; a=100');
 
 figure(3)
 set(gcf,'visible',flagshow)
@@ -1145,11 +1168,16 @@ flagsave=1;
 flagshow='on';
 
 figure(111)
-plot(BBQ.FFT_slide_turns,BBQ.NAFF_amp); hold on
+plot(BBQ.FFT_slide_time,BBQ.NAFF_amp); hold on
+N=20;
+xtime=linspace(BBQ.FFT_slide_time(1),BBQ.FFT_slide_time(end),N);
+set(gca,'xticklabel',datestr(xtime,'HH:MM'))
+set(gca,'xtick',(xtime))
+rotateticklabel(gca,90,8);
 
 %%
 
-BBQ.rise_turns=find([BBQ.FFT_slide_turns>1 & BBQ.FFT_slide_turns<2e6]==1); % window on BBQ
+BBQ.rise_turns=find([BBQ.FFT_slide_turns>1 & BBQ.FFT_slide_turns<1.1e6]==1); % window on BBQ
 BBQ.rise_time=BBQ.FFT_slide_time(BBQ.rise_turns);
 BBQ.rise_data=BBQ.NAFF_amp(BBQ.rise_turns);
 BBQ.rise_turns=BBQ.FFT_slide_turns(BBQ.rise_turns);
