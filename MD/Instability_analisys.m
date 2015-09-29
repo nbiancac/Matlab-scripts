@@ -1,9 +1,12 @@
+clear all;
+close all;
+
 % addpath(genpath('/afs/cern.ch/user/n/nbiancac/scratch0/Matlab-scripts/'));
 
 addpath(genpath('/home/nick/HDD/Work/Matlab-scripts'));
 
 % mainDir='/home/nick/HDD/Dropbox/CERN/MD/4254/';
-fill='29082015-ACdipole';
+fill='3860';
 mainDir=['/home/nick/HDD/Work/CERN/MD/LHC/2015/',fill,'/'];
 DataDir=[mainDir,'Data/'];
 ResultDir=[mainDir,'Result/'];
@@ -11,7 +14,7 @@ CollDir=[DataDir,'Collimators/'];
 
 % machine parameters
 [~,~,~,E0]=particle_param('proton');
-machine=LHC_param(E0,450e9,'Nominal LHC');
+machine=LHC_param(E0,6500e9,'Nominal LHC');
 disp([char(machine.scenario),' @ ',machine.Estr])
 % beam and plane
 beam='2';
@@ -183,25 +186,25 @@ BSRT.eV=((BSRT.sigmaV).^2-BSRT.LSFV^2)/(BSRT.BETAV)*(machine.beta*machine.gamma)
 
 
 %% Get collimators
-comment_scenario='Scan_TDI_closed/';
-L=dir([CollDir,comment_scenario,'*B',beam,'*LVDT_GU.dat']);
-%%
+comment_scenario='Scan_TCSG.D4L7_open/';
+L=dir([CollDir,comment_scenario,'*B',beam,'*LVDT_*.dat']);
+
 Coll=[];
 
 for ii=1:length(L)
     Coll(ii).name={};
     Coll(ii).data={};
     disp([L(ii).name]);
-    namecoll=regexprep(L(ii).name,[{'_MEAS_LVDT_GU.dat'},{'TCTP'},{'TCSP.A4R6'},{'TCTV'}],[{''},{'TCT'},{'TCSG.4R6'},{'TCTVA'}]);
+    namecoll=regexprep(L(ii).name,[{'_MEAS_LVDT_LD.dat'},{'_MEAS_LVDT_GU.dat'},{'TCTP'},{'TCSP.A4R6'},{'TCTV'}],[{''},{''},{'TCT'},{'TCSG.4R6'},{'TCTVA'}]);
     [time,data]=read_timber_data([CollDir,comment_scenario,L(ii).name],'yyyy-mm-dd HH:MM:SS.FFF');
     Coll(ii).name=namecoll;
     Coll(ii).data=data;
     Coll(ii).time=time;
 end
-%%
+
 if strcmp(beam,'1')
-    L=dir([DataDir,'TCLIA.4R2_MEAS_LVDT_GU.dat']);
-    L=[L,dir([DataDir,'TDI.4L2_MEAS_LVDT_GU.dat'])];
+    L=dir([CollDir,comment_scenario,'TCLIA.4R2_MEAS_LVDT_GU.dat']);
+    L=[L,dir([CollDir,comment_scenario,'TDI.4L2_MEAS_LVDT_GU.dat'])];
     mm=length(Coll);
     for ii=1:length(L)
         disp([L(ii).name]);
@@ -218,7 +221,7 @@ else
     for ii=1:length(L)
         disp([L(ii).name]);
         namecoll=regexprep(L(ii).name,[{'_MEAS_LVDT_GU.dat'},{'TCTP'},{'TCSP.A4R6'},{'TCTV'}],[{''},{'TCT'},{'TCSG.4R6'},{'TCTVA'}]);
-        [time,data]=read_timber_data([CollDir,comment_scenario,L(ii).name],'yyyy-mm-dd HH:MM:SS.FFF');
+        [time,data]=read_timber_data([CollDir,comment_scenario,namecoll],'yyyy-mm-dd HH:MM:SS.FFF');
         Coll(mm+ii).name=namecoll;
         Coll(mm+ii).data=data;
         Coll(mm+ii).time=time;
@@ -226,13 +229,18 @@ else
 end
 
 
-%%
-CollDataDir=['/afs/cern.ch/user/n/nbiancac/ln_delphi/PYTHON_codes_and_scripts/LHC_impedance_and_scripts/Coll_settings/'];
-file1='LHC_ft_6.5TeV_B1.txt';
-disp(['Making table with ',file1,' model.'])
+time_sample=Coll(1).time(1);
+for ii=1:length(Coll)
+    Coll(ii).sampled_half_gap=mean(Coll(ii).data)/2*1e-3;
+end
 
+CollDataDir=['/afs/cern.ch/user/n/nbiancac/ln_delphi/PYTHON_codes_and_scripts/LHC_impedance_and_scripts/Coll_settings/'];
+file1='LHC_inj_450GeV_B1.txt';
 [names1,gaps1,betx1,bety1,sigma1]=read_coll_file([CollDataDir,file1],'all','nounique');
 
+Table={};
+Table.data=[];
+Table.name=[];
 count=0;
 for ii=1:length(names1)
     disp(char(names1(ii)))
@@ -240,33 +248,37 @@ for ii=1:length(names1)
         if strcmp(char(Coll(jj).name),char(names1(ii)))
             count=count+1;
             disp([char(Coll(jj).name),' = ',char(names1(ii))])
+            Table.name=[Table.name,names1(ii)];
+            Table.data=[Table.data,Coll(jj).sampled_half_gap];
         elseif (strncmp(char(Coll(jj).name),'TDI',3)) && (strncmp(char(names1(ii)),'TDI',3))
             count=count+1;
             disp([char(Coll(jj).name),' = ',char(names1(ii))])
+            Table.name=[Table.name,names1(ii)];
+            Table.data=[Table.data,Coll(jj).sampled_half_gap];
         elseif (strncmp(char(Coll(jj).name),'TCDQ',4)) && (strncmp(char(names1(ii)),'TCDQ',4))
             count=count+1;
             disp([char(Coll(jj).name),' = ',char(names1(ii))])
+            Table.name=[Table.name,names1(ii)];
+            Table.data=[Table.data,Coll(jj).sampled_half_gap];
         end
     end
 end
-%%
+
 disp(['Collimators in table: ',num2str(length(names1))]);
 disp(['Collimators from Timber: ',num2str(length(Coll))]);
-disp(['Collimators tabbed from Timber to table: ',num2str(count)]);
+disp(['Collimators tabbed from Timber to table: ',num2str(length(Table.name))]);
 
-
-%%
 time_sample=Coll(1).time(1);
 hg_vec=[];
-for ii=1:length(Coll)
-    hg_vec=[hg_vec,interp1(Coll(ii).time,Coll(ii).data,time_sample)/2];
+for ii=1:length(Table)
+    hg_vec=[hg_vec,Table(ii).data];
 end
-%%
-swap_coll_file([CollDataDir,file1],[CollDataDir,'prova'],'Halfgap[m]', hg_vec)
-
+filename=regexprep(file1,'.txt',['_',regexprep(comment_scenario,'/',''),'.txt']);
+swap_coll_file([CollDataDir,file1],[CollDataDir,filename],'Halfgap[m]', hg_vec)
+system(['column -t ',CollDataDir,filename]);
 %% FBCT
 close all
-flagsave=0;
+flagsave=1;
 flagwrite=1;
 flagshow='on';
 
@@ -323,7 +335,7 @@ if flagsave
     hgexport(gcf, [ResultDir,name,'.pdf'],s,'Format','pdf');
     hgexport(gcf, [ResultDir,name,'.png'],s,'Format','png');
 end
-%
+
 
 % FBCT for chosen index
 FBCT_sel={};
@@ -353,7 +365,7 @@ end
 ylabel('N_b [ppb]');
 title(['Fill:',fill,' FBCT B',beam])
 grid on
-N=10;
+N=50;
 xtime=linspace(FBCT.time(1),FBCT.time(end),N);
 set(gca,'xticklabel',datestr(xtime,'HH:MM'))
 set(gca,'xtick',(xtime))
@@ -567,7 +579,7 @@ end
 %% BSRT
 close all
 
-flagsave=0;
+flagsave=1;
 flagshow='on';
 
 index=filled_buckets;
@@ -652,6 +664,7 @@ if Mbunches<10
 else
     legend('All filled buckets','location','northwest');
 end
+%%
 N=10;
 xtime=linspace(BBQHS.time(1),BBQHS.time(end),N);
 set(gca,'xticklabel',datestr(xtime,'HH:MM'))
@@ -745,7 +758,7 @@ if flagsave
     hgexport(gcf, [ResultDir,name,'.png'],s,'Format','png');
 end
 
-%%
+
 flagsave=1;
 
 figure()
@@ -934,8 +947,9 @@ for ii=1:length(ind1)
         set(h,'color',col_vec(ii,:))
     end        
 end
-
-figure(11); xlim([xlim1 xlim2]); hold off;
+if showlines
+    figure(11); xlim([xlim1 xlim2]); hold off;
+end
 figure(12); xlim([xlim1 xlim2]); hold off;
 
 ylabel('BBQ amplitude [arb. units]'); xlabel('Q');
@@ -1104,7 +1118,7 @@ rotateticklabel(gca,90,8);
 axisxx(BBQ.turns,BBQ.data);
 
 %%
-BBQ.rise_turns=1:1e6; % window on BBQ
+BBQ.rise_turns=1:2e6; % window on BBQ
 BBQ.rise_time=BBQ.time(BBQ.rise_turns);
 BBQ.rise_data=BBQ.data(BBQ.rise_turns);
 figure(2)
@@ -1177,7 +1191,7 @@ rotateticklabel(gca,90,8);
 
 %%
 
-BBQ.rise_turns=find([BBQ.FFT_slide_turns>1 & BBQ.FFT_slide_turns<1.1e6]==1); % window on BBQ
+BBQ.rise_turns=find([BBQ.FFT_slide_turns>1 & BBQ.FFT_slide_turns<2.1e6]==1); % window on BBQ
 BBQ.rise_time=BBQ.FFT_slide_time(BBQ.rise_turns);
 BBQ.rise_data=BBQ.NAFF_amp(BBQ.rise_turns);
 BBQ.rise_turns=BBQ.FFT_slide_turns(BBQ.rise_turns);
