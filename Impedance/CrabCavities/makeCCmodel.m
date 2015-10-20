@@ -85,7 +85,11 @@ if strcmp(FM,'RovQ') && ~strcmp(mode_plane,'z')
         end
 
         freq_mode=sort(unique(freq_mode(freq_mode>0)));
-        Zt_mode=transverse_resonator(freq_mode,Q,f,R);
+        if strcmp(mode_plane,'z')
+            Zt_mode=longitudinal_resonator(freq_mode,Q,f,R);
+        else
+            Zt_mode=transverse_resonator(freq_mode,Q,f,R);
+        end
         freq_tot_new=[freq_tot,freq_mode];
         freq_tot_new=unique(sort(freq_tot_new(freq_tot_new>0)));
         Zt_tot_new=interp1(freq_tot,Zt_tot,freq_tot_new);

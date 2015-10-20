@@ -21,7 +21,7 @@ if E==7e12
         HLLHC.M=2604;
         HLLHC.sigmaz=(1.08e-9/4)*constants('clight'); % rms
         HLLHC.V=16e6;
-        HLLHC.en=2.5e-6;
+        HLLHC.en=1.7e-6;
         HLLHC.scenario={scenario};
     elseif strcmp(scenario,'HL-LHC 8b+4e')
         HLLHC.Estr='7TeV';

@@ -10,4 +10,11 @@ function CC=sumCCmodel(CC1,CC2)
     Z=Z1+Z2;
     CC.freq=freq; CC.Z=Z;
 
+    ind=isnan(CC.Z);
+    
+    if ~isempty(ind)
+        disp('cleaning nans..')
+        CC.Z(ind)=[];
+        CC.freq(ind)=[];
+    end
 end

@@ -1,4 +1,4 @@
-function [ploss,kloss]=power_loss(freq,Zlong,machine)
+function [ploss,kloss]=power_loss(freq,Zlong,machine,tol,flagshow)
               
 %%%%%%%%
 % Calculates power loss [W] and loss factor in [Ohm/C]
@@ -11,13 +11,12 @@ taub=machine.taub; % 1 sigmaz in [s]
 Nb=machine.Nb;
 M=machine.M;
 e=1.6021e-19;
-mp=1.672623e-27;
 clight=299792458;
 beta=sqrt(1-1/gamma^2);
 frev=beta*clight/circum;
-sigz=taub*clight;
+sigmaz=taub*clight;
 
-nperc=1;
+nperc=tol;
 omega=2*pi*freq;
 omega_rev=2*pi*frev;
 h=exp(-(omega.^2*taub^2));
@@ -39,13 +38,21 @@ omega_sample=omega_rev*M*p;
 freq_sample=omega_sample/2/pi;
 powspec=h;
 
-Zlong_sample=interp1(omega,real(Zlong),omega_sample);
-powspec_sample=interp1(omega,powspec,omega_sample);
-% figure(3);
-% loglog(freq,real(Zlong)); hold on;
-% loglog(freq,powspec,'-r');
-% loglog(freq_sample,real(Zlong_sample),'-ob'); hold on;
-% loglog(freq_sample,powspec_sample,'-or'); hold off;
+[~,ind]=unique(omega);
+freq=freq(ind);
+omega=omega(ind);
+Zlong=Zlong(ind);
+powspec=powspec(ind);
+
+Zlong_sample=interp1(omega,real(Zlong),omega_sample,'linear','extrap');
+powspec_sample=interp1(omega,powspec,omega_sample,'linear','extrap');
+if strcmp(flagshow,'on')
+figure(3);
+%     plot(freq,real(Zlong)); hold on;
+    plot(freq,10*log10(powspec),'-r'); hold on;
+%     plot(freq_sample,real(Zlong_sample),'-.b'); hold on;
+    plot(freq_sample,10*log10(powspec_sample),'dk'); hold off;
+end
 sum_impspec=sum(Zlong_sample.*powspec_sample);
 % sum_impspec=trapz(freq,real(Zlong).*powspec)/M/frev;
 ploss=2*(e*M*Nb*frev)^2*sum_impspec;
