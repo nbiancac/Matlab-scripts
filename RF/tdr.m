@@ -1,15 +1,26 @@
-function [pulse_out,step_out,Z_step]=tdr(Z0,sigma_t,MeasDir,ResultDir,name,saveplot)
+function [pulse_out,step_out,Z_step]=tdr(Z0,sigma_t,DataDir,showplot)
 %   function [pulse_out,step_out,Z_step]=tdr(Z0,sigma_t,MeasDir,ResultDir,name,saveplot)
 %   
 %
-    
-    letto=importdata([MeasDir,'TS0.S2P']);
-    freq=letto.data(:,1);
-    S11=(letto.data(:,2).*exp(1i.*letto.data(:,3)*pi/180));
-    S21=(letto.data(:,4).*exp(1i.*letto.data(:,5)*pi/180));
-    S12=(letto.data(:,6).*exp(1i.*letto.data(:,7)*pi/180));
-    S22=(letto.data(:,8).*exp(1i.*letto.data(:,9)*pi/180));
 
+    if strmatch('S2P',DataDir(end-2:end))
+        
+        freq=S2P([DataDir],'freq');
+        S11=S2P([DataDir],'S11');
+        S21=S2P([DataDir],'S21');
+        S22=S2P([DataDir],'S22');
+        S12=S2P([DataDir],'S12');
+
+    elseif strmatch('S4P',DataDir(end-2:end))
+        
+
+        freq=S4P([DataDir],'freq');
+        S11=S4P([DataDir],'S11');
+        S21=S4P([DataDir],'S21');
+        S22=S4P([DataDir],'S22');
+        S12=S4P([DataDir],'S12');
+        
+    end
 %     figure(1)
 %     plot(freq,20*log10(abs(S11)));
 %     xlabel('f');
@@ -50,7 +61,7 @@ function [pulse_out,step_out,Z_step]=tdr(Z0,sigma_t,MeasDir,ResultDir,name,savep
     S12t_step=conv(step,S12t_pulse);
     S21t_step=conv(step,S21t_pulse);
 
-    if saveplot==1
+    if showplot==1
         figure(2);
         plot(space_step,S11t_step); hold on;
         plot(space_step,S22t_step,'r'); hold on;
@@ -58,12 +69,6 @@ function [pulse_out,step_out,Z_step]=tdr(Z0,sigma_t,MeasDir,ResultDir,name,savep
         xlabel('s [m]')
         ylabel('S(s)')
         xlim([-1 8])
-        name=[name,'_step'];
-        s=hgexport('readstyle','PRSTAB');
-        hgexport(gcf,'',s,'applystyle',true);
-        saveas(gcf, [ResultDir,name,'.fig'],'fig');
-        hgexport(gcf, [ResultDir,name,'.pdf'],s,'Format','pdf');
-        hgexport(gcf, [ResultDir,name,'.png'],s,'Format','png');
     end
     
     pulse_out=[space_pulse',S11t_pulse',S21t_pulse',S12t_pulse',S22t_pulse'];

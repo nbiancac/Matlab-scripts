@@ -6,7 +6,7 @@ close all;
 addpath(genpath('/home/nick/HDD/Work/Matlab-scripts'));
 
 % mainDir='/home/nick/HDD/Dropbox/CERN/MD/4254/';
-fill='3860';
+fill='4284';
 mainDir=['/home/nick/HDD/Work/CERN/MD/LHC/2015/',fill,'/'];
 DataDir=[mainDir,'Data/'];
 ResultDir=[mainDir,'Result/'];
@@ -17,8 +17,8 @@ CollDir=[DataDir,'Collimators/'];
 machine=LHC_param(E0,6500e9,'Nominal LHC');
 disp([char(machine.scenario),' @ ',machine.Estr])
 % beam and plane
-beam='2';
-plane='V';
+beam='1';
+plane='H';
 comment=''; % for BBQ
 
 flagsave=0;
@@ -520,7 +520,7 @@ end
 %% ROF & BBQ
 
 figure(3)
-[h]=plot(BBQ.time,BBQ.data);
+[h]=plot(BBQHS.time,BBQHS.data);
 h2=axisyy(ROF.time,ROF.data,'-k');
 xlabel('Turns')
 ylabel('BBQ [arb.units]')
@@ -1101,6 +1101,122 @@ if flagsave
 end
 
 
+%% Risetimes in TD from BBQ HS
+
+close all;
+flagsave=1;
+flagshow='on';
+comment='1410';
+BBQ=BBQHS;
+figure(111)
+plot(BBQ.time,BBQ.data); hold on
+xlim([min(BBQ.time) max(BBQ.time)])
+N=20;
+xtime=linspace(BBQ.time(1),BBQ.time(end),N);
+set(gca,'xticklabel',datestr(xtime,'HH:MM'))
+set(gca,'xtick',(xtime))
+rotateticklabel(gca,90,8);
+h=axisxx(BBQ.turns,BBQ.data,'-b');
+set(h.h_axis,'XLim',[min(BBQ.turns), max(BBQ.turns)])
+%%
+
+BBQ.rise_turns_ind=find(BBQ.turns>1.205e8 & BBQ.turns<1.22e8); % window on BBQ
+BBQ.rise_turns=BBQ.turns(BBQ.rise_turns_ind);
+BBQ.rise_time=BBQ.time(BBQ.rise_turns_ind);
+BBQ.rise_data=BBQ.data(BBQ.rise_turns_ind);
+figure(2)
+set(gcf,'visible',flagshow)
+up=BBQ.rise_data;%envelope(BBQ.rise_turns,BBQ.rise_data,,'top');
+
+h1=plot(BBQ.rise_time,BBQ.rise_data,'-k'); hold on;
+h3=plot(BBQ.time,BBQ.data,'-'); set(h3,'color',[.5 .5 .5]);
+h2=plot(BBQ.rise_time,up,'-r','linewidth',2); hold off;
+
+time_2fit=BBQ.rise_time;
+turns_2fit=min(BBQ.rise_turns):max(BBQ.rise_turns);
+L_all_2fit=interp1(BBQ.rise_turns,up,turns_2fit);
+turns_2fit=1:length(turns_2fit);
+
+ylabel('<x> [a.u.]')
+title(['Fill:',fill,' B',beam,plane])
+legend([h1,h2],'data','envelope')
+N=20;
+ytime=linspace(BBQ.time(1),BBQ.time(end),N);
+set(gca,'xtick',ytime)
+set(gca,'xticklabel',datestr(ytime,'HH:MM'))
+rotateticklabel(gca,90,6);
+hold off
+
+if flagsave
+    name=['Envelope_instability_',comment,'_B',beam,plane];
+    s=hgexport('readstyle','PRSTAB-6pt');% s.FixedFontSize='20';s.width='20'; set(gcf,'PaperType','A3')
+    hgexport(gcf,'',s,'applystyle',true);
+    saveas(gcf, [ResultDir,name,'.fig'],'fig');
+    hgexport(gcf, [ResultDir,name,'.pdf'],s,'Format','pdf');
+    hgexport(gcf, [ResultDir,name,'.png'],s,'Format','png');
+end
+
+
+func=log(L_all_2fit);
+figure(3);
+p3=plot(turns_2fit'/machine.f0,func,'-k'); hold on
+p=ginput(2);
+xlim1=p(1,1);
+xlim2=p(2,1);
+
+ind_noise=find(turns_2fit'/machine.f0<xlim1);
+mean_func=mean(func(ind_noise));
+func2fit=func(turns_2fit'/machine.f0>xlim1 & turns_2fit'/machine.f0<xlim2);
+time2fit=turns_2fit(turns_2fit'/machine.f0>xlim1 & turns_2fit'/machine.f0<xlim2)/machine.f0;
+
+figure(3)
+h1=plot(time2fit,func2fit,'.k'); hold on;
+
+[f0,g]=fit(time2fit',func2fit','poly1');
+
+hold on;
+h2=plot(time2fit,f0.p1.*time2fit+f0.p2,'-r','linewidth',2);
+conf=confint(f0);
+meas=1/(abs(sum(conf(:,1)))/2);
+err=diff(conf(:,1))/2*meas^2;
+legend([p3,h1,h2],'Data','Fit data',['Fit.: \tau=',num2str(meas),'\pm',num2str(err)],'location','northwest');
+legend boxoff;
+xlabel('Time [s]');
+ylabel(['log(',plane,'-data) [arb. units]'])
+title(['Fill:',fill,' B',beam,plane])
+hold off;
+
+
+if flagsave
+    name=['Risetime_log_',comment,'_B',beam,plane];
+    s=hgexport('readstyle','PRSTAB'); s.FixedFontSize='15';
+    hgexport(gcf,'',s,'applystyle',true);
+    saveas(gcf, [ResultDir,name,'.fig'],'fig');
+    hgexport(gcf, [ResultDir,name,'.pdf'],s,'Format','pdf');
+    hgexport(gcf, [ResultDir,name,'.png'],s,'Format','png');
+end
+
+figure(4);
+h1=plot(turns_2fit'/machine.f0,exp(func),'-k'); hold on
+h2=plot(time2fit,exp(time2fit*abs(f0.p1)+f0.p2),'-r','linewidth',2);
+legend([h1,h2],'Data',['Fit.: \tau=',num2str(meas),'\pm',num2str(err)],'location','northwest');
+legend boxoff;
+xlabel('Time [s]');
+ylabel([plane,'-data [arb. units]'])
+title(['Fill:',fill,' B',beam,plane])
+hold off
+
+if flagsave
+    name=['Risetime_',comment,'_B',beam,plane];
+    s=hgexport('readstyle','PRSTAB'); s.FixedFontSize='15';
+    hgexport(gcf,'',s,'applystyle',true);
+    saveas(gcf, [ResultDir,name,'.fig'],'fig');
+    hgexport(gcf, [ResultDir,name,'.pdf'],s,'Format','pdf');
+    hgexport(gcf, [ResultDir,name,'.png'],s,'Format','png');
+end
+
+
+
 %% Risetimes in in TD from BBQ raw
 
 close all;
@@ -1110,15 +1226,16 @@ flagshow='on';
 
 figure(111)
 plot(BBQ.time,BBQ.data); hold on
+xlim([min(BBQ.time) max(BBQ.time)])
 N=20;
 xtime=linspace(BBQ.time(1),BBQ.time(end),N);
 set(gca,'xticklabel',datestr(xtime,'HH:MM'))
 set(gca,'xtick',(xtime))
 rotateticklabel(gca,90,8);
-axisxx(BBQ.turns,BBQ.data);
-
+h=axisxx(BBQ.turns,BBQ.data,'-b');
+set(h.h_axis,'XLim',[min(BBQ.turns), max(BBQ.turns)])
 %%
-BBQ.rise_turns=1:2e6; % window on BBQ
+BBQ.rise_turns=5.8e7:6.2e7; % window on BBQ
 BBQ.rise_time=BBQ.time(BBQ.rise_turns);
 BBQ.rise_data=BBQ.data(BBQ.rise_turns);
 figure(2)
