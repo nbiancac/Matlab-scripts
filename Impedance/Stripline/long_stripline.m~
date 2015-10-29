@@ -1,0 +1,3 @@
+
+c=constants('clight')
+Zs*(phi0/2/pi)^2*(sin(omega*l/c)^2+1i*sin(omega*l/c)*cos(omega*l/c))

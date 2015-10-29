@@ -1,0 +1,13 @@
+freq=1e7:1e7:2e9;
+length=120e-3;
+diam=110e-3;
+radius=diam/2;
+width=10e-3;
+phi0=width/radius;
+Zs=50;
+Ns=4;
+Z=long_stripline(freq,Zs,phi0,length,Ns);
+
+figure(1)
+plot(freq,real(Z),'-k'); hold on;
+plot(freq, imag(Z),'-r'); hold off

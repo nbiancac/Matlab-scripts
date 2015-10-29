@@ -32,8 +32,7 @@ h=exp(-(omega.^2*taub^2));
     
     Pmax=floor(omega_extr/(omega_rev*M)); % approx value for max intergation;
     if isnan(Pmax)
-        warning('Pmax=Nan, consider increasing the frequency range or decreasing the tolerance')
-    end
+        warning('Pmax=N')
 p=1:Pmax;
 
 omega_sample=omega_rev*M*p;
