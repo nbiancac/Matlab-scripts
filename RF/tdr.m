@@ -1,10 +1,11 @@
-function [pulse_out,step_out,Z_step]=tdr(Z0,sigma_t,DataDir,showplot)
+function [pulse_out,step_out,Z_step]=tdr(Z0,sigma_t,DataDir,showplot,S)
 %   function [pulse_out,step_out,Z_step]=tdr(Z0,sigma_t,MeasDir,ResultDir,name,saveplot)
 %   
 %
-
+if isempty(S)
+    
     if strmatch('S2P',DataDir(end-2:end))
-        
+        disp('S parameters provided with S2P file');    
         freq=S2P([DataDir],'freq');
         S11=S2P([DataDir],'S11');
         S21=S2P([DataDir],'S21');
@@ -12,8 +13,7 @@ function [pulse_out,step_out,Z_step]=tdr(Z0,sigma_t,DataDir,showplot)
         S12=S2P([DataDir],'S12');
 
     elseif strmatch('S4P',DataDir(end-2:end))
-        
-
+        disp('S parameters provided with S4P file');
         freq=S4P([DataDir],'freq');
         S11=S4P([DataDir],'S11');
         S21=S4P([DataDir],'S21');
@@ -21,10 +21,14 @@ function [pulse_out,step_out,Z_step]=tdr(Z0,sigma_t,DataDir,showplot)
         S12=S4P([DataDir],'S12');
         
     end
-%     figure(1)
-%     plot(freq,20*log10(abs(S11)));
-%     xlabel('f');
-%     ylabel('S11 dB')
+else
+    disp('S parameters provided with structure.')
+    freq=S.freq;
+    S11=S.S11;
+    S21=S.S21;
+    S12=S.S12;
+    S22=S.S22;
+end
 
     N=numel(freq);
     freq_int=linspace(0,max(freq),N);
@@ -53,6 +57,7 @@ function [pulse_out,step_out,Z_step]=tdr(Z0,sigma_t,DataDir,showplot)
     S22t_pulse=real(ifftshift(ifft(fftshift(S22_full.*wind_freq))));
     S12t_pulse=real(ifftshift(ifft(fftshift(S12_full.*wind_freq))));
     S21t_pulse=real(ifftshift(ifft(fftshift(S21_full.*wind_freq))));
+    
     
     step=ones(Nfull,1);
     space_step=[space_pulse,2*space_pulse(end)+space_pulse(2:end)];
