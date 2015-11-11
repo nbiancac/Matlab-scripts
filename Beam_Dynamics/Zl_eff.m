@@ -1,6 +1,9 @@
-function Zleff=Zl_eff(freq,Z,taub, f0,Qs,l,type)
+function Zleff=Zl_eff(freq,Z,machine,l,type,tol)
 % Zl_eff(freq,Z,f0,Qs,l,'type')
-clight = 299792458;
+clight = constants('clight');
+Qs=machine.Qs;
+taub=machine.taub;
+f0=machine.f0;
 
             
 sigma_z=taub*clight;
@@ -23,7 +26,7 @@ omega_s=Qs*omega_0;
 if strcmp(type,'Gaussian')
     h=(omega*sigma_z/clight).^(2*l).*exp(-omega.^2*sigma_z^2/clight^2);
     
-    nperc=1;
+    nperc=tol;
     omega_part=omega(omega>0);
     h_part=h(omega>0);
     [max_h,max_ind]=max(h_part);
@@ -38,6 +41,7 @@ if strcmp(type,'Gaussian')
     p=-Pmax:Pmax;
     omega_p=p*omega_0+l*omega_s;
 
+    omega_p=unique(omega_p);
     h_p=interp1(omega,h,omega_p);
     Z_p=interp1(omega,z,omega_p);
     N=(Z_p)./omega_p*omega_0.*h_p;

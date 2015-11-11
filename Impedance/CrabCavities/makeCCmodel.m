@@ -86,7 +86,7 @@ if strcmp(FM,'RovQ') && ~strcmp(mode_plane,'z')
 
         freq_mode=sort(unique(freq_mode(freq_mode>0)));
         if strcmp(mode_plane,'z')
-            Zt_mode=longitudinal_resonator(freq_mode,Q,f,R);
+            Zt_mode=long_resonator(freq_mode,Q,f,R);
         else
             Zt_mode=transverse_resonator(freq_mode,Q,f,R);
         end
@@ -105,7 +105,7 @@ elseif strcmp(FM,'Feedback') && ~strcmp(mode_plane,'z')
       freq_tot=unique(sort([freq_tot,(freqFM_int')]));
       Zt_tot=interp1(freqFM_int,ReFM_int+1i*ImFM_int,freq_tot)*Ncavity;
 elseif strcmp(FM,'None') || strcmp(mode_plane,'z')
-      disp('FM as it is (no feedback at all).')
+      disp('no FM.')
       Zt_tot=0*freq_tot;
 end 
 
@@ -115,7 +115,7 @@ disp(['that corresponds to the HOM in the ',mode_plane,'-plane of the crab cavit
 freq_base=sort([10.^(1:1/1:10),1e6:1e6:5e9]);      
 for i_mode=2:size(HOM_table,1)
 
-    disp(['HOM: ', num2str(i_mode),'/',num2str(size(HOM_table,1)),' @ ',num2str(f/1e6),'MHz'])
+    
     if strcmp(mode_plane,'z')
         R=HOM_table(i_mode,1);
         Q=HOM_table(i_mode,2);
@@ -129,7 +129,8 @@ for i_mode=2:size(HOM_table,1)
         Q=HOM_table(i_mode,8);
         f=HOM_table(i_mode,9);
     end
-
+    disp(['HOM: ', num2str(i_mode),'/',num2str(size(HOM_table,1)),' @ ',num2str(f/1e6),'MHz'])
+    
     if strcmp(spreadmode,'On')
         f_spread=-3e6+6e6*rand(1,8); % uniform spread +/- 3MHz
     else
@@ -146,7 +147,11 @@ for i_mode=2:size(HOM_table,1)
                 freq_mode=[freq_mode,frmax:(nn*D)/N:frmax+nn*D];
         end
         freq_mode=sort(unique([freq_base,freq_mode(freq_mode>0)]));
-        Zt_mode=transverse_resonator(freq_mode,Q,f,R);
+        if strcmp(mode_plane,'z')
+            Zt_mode=long_resonator(freq_mode,Q,f,R);
+        else
+            Zt_mode=transverse_resonator(freq_mode,Q,f,R);
+        end
         freq_tot_new=[freq_tot,freq_mode];
         freq_tot_new=unique(sort(freq_tot_new(freq_tot_new>0)));
         Zt_tot_new=interp1(freq_tot,Zt_tot,freq_tot_new);
