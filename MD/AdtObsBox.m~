@@ -27,7 +27,7 @@ QlimitsH=[0.273 0.283]; % for tune search in H
  
         
 for beam=[{'B1'},{'B2'}]
-    for plane={'vertical'}
+    for plane={'horizontal'}
        
         if strcmp(plane,'vertical'); Qlimits=QlimitsV; else Qlimits=QlimitsH; end
         ADT.data_new=[];
@@ -192,16 +192,15 @@ for beam=[{'B1'},{'B2'}]
                 
                 fNAFF_vec=[fNAFF_vec,avetune];
             end
-            
-            figure(2)
+
+            figure()
             plot(ADT.bucket_cut,fNAFF_vec,'or','markerfacecolor','r')
             title([char(beam),' ',char(plane)])
-            ylim(Qlimits)
             if strcmp(char(plane),'horizontal');  ylabel(['Q_X']); else ylabel(['Q_Y']); end
-            
+
             xlabel('Bucket number')
             grid on
-            
+
             if flagsave 
                 name=[regexprep(filename,'.h5',''),'_tune_train_',char(beam),'_',char(plane)];
                 disp(name)

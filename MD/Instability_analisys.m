@@ -6,7 +6,7 @@ close all;
 addpath(genpath('/home/nick/HDD/Work/Matlab-scripts'));
 
 % mainDir='/home/nick/HDD/Dropbox/CERN/MD/4254/';
-fill='4284';
+fill='4290';
 mainDir=['/home/nick/HDD/Work/CERN/MD/LHC/2015/',fill,'/'];
 DataDir=[mainDir,'Data/'];
 ResultDir=[mainDir,'Result/'];
@@ -185,7 +185,7 @@ BSRT.eH=((BSRT.sigmaH).^2-BSRT.LSFH^2)/(BSRT.BETAH)*(machine.beta*machine.gamma)
 BSRT.eV=((BSRT.sigmaV).^2-BSRT.LSFV^2)/(BSRT.BETAV)*(machine.beta*machine.gamma);
 
 
-%% Get collimators
+% Get collimators
 comment_scenario='Scan_TCSG.D4L7_open/';
 L=dir([CollDir,comment_scenario,'*B',beam,'*LVDT_*.dat']);
 
@@ -688,7 +688,7 @@ if flagsave
     hgexport(gcf, [ResultDir,name,'.png'],s,'Format','png');
 end
 
-% BSRT BBQHS BBQG INT OCT
+%% BSRT BBQHS BBQG INT OCT
 
 col_vec=distinguishable_colors(length(ind));
 h1_vec=[]; leg1_vec=[];

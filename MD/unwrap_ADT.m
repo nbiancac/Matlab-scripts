@@ -8,7 +8,6 @@ for ii=1:size(L.raw,1)
     else
         data=L.raw(ii,:);
         data(data==0)=nan;
-        data=data-nanmean(data);
         L.data=[L.data;double(data(1:end))];
         L.bucket=[L.bucket,ii];
     end
