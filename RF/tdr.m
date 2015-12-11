@@ -1,6 +1,5 @@
 function [pulse_out,step_out,Z_step]=tdr(Z0,sigma_t,DataDir,showplot,S)
-%   function [pulse_out,step_out,Z_step]=tdr(Z0,sigma_t,MeasDir,ResultDir,name,saveplot)
-%   
+%   function [pulse_out,step_out,Z_step]=tdr(Z0,sigma_t,DataDir,showplot,S)
 %
 if isempty(S)
     
@@ -36,6 +35,10 @@ end
     S22_int=interp1(freq,S22,freq_int,'linear','extrap');
     S12_int=interp1(freq,S12,freq_int,'linear','extrap');
     S21_int=interp1(freq,S21,freq_int,'linear','extrap');
+    
+    figure(11);
+    plot(freq_int,20*log10(S12_int)); hold on;
+    plot(freq,20*log10(S12),'r')
 
     Nfull=2*N-1;
     freq_full=[-freq_int(end:-1:2) freq_int(1:end)];
@@ -53,19 +56,57 @@ end
     wind=1./sqrt(2*pi)/sigma_t*exp(-1/2/sigma_t^2*(time_pulse).^2);
     wind_freq=exp(-0.5*(2*pi*freq_full.*sigma_t).^2);
     
+    
     S11t_pulse=real(ifftshift(ifft(fftshift(S11_full.*wind_freq))));
     S22t_pulse=real(ifftshift(ifft(fftshift(S22_full.*wind_freq))));
     S12t_pulse=real(ifftshift(ifft(fftshift(S12_full.*wind_freq))));
     S21t_pulse=real(ifftshift(ifft(fftshift(S21_full.*wind_freq))));
-    
-    
-    step=ones(Nfull,1);
+    %%
+    step=[ones(Nfull,1)];
     space_step=[space_pulse,2*space_pulse(end)+space_pulse(2:end)];
     S11t_step=conv(step,S11t_pulse);
     S22t_step=conv(step,S22t_pulse);
     S12t_step=conv(step,S12t_pulse);
     S21t_step=conv(step,S21t_pulse);
+   
+%     figure(1)
+%    plot(freq,20*log10(abs(S21)));
+%    
+%     figure(3)
+%     plot(space_step,real(S21t_step),'-k')
+% %     xlim([5 25])
+% 
+% ind1=find(space_step>11.63 & space_step<50);
+% 
+% 
+% S21t_step(ind1)=S21t_step(ind1(end));
 
+
+%     figure(3)
+%     hold on;
+%     plot(space_step,real(S21t_step),'-r')
+%     S21t_pulse_dec=deconv(S21t_step,step);
+%   %%  
+%     figure(100)
+%     plot(S21t_pulse_dec); hold on;
+%     plot(S21t_pulse,'--r');
+%     %%
+%     dt=diff(time_pulse(1:2));
+%     df=1/(dt);
+%     freq_full=df.*linspace(-0.5, 0.5, Nfull);
+%     
+%     S21_gated_all=(fftshift(fft(fftshift(S21t_pulse_dec))))./wind_freq;
+%     %%
+%     S21_gated=S21_gated_all(freq_full>=0);
+%     freq_gated=freq_full(freq_full>=0);
+%     %%
+%     
+%     figure(4)
+%     plot(freq_gated,20*log10(abs(S21_gated)))
+%     hold on;
+%     plot(freq,20*log10(abs(S12)),'r')
+    %%
+    
     if showplot==1
         figure(2);
         plot(space_step,S11t_step); hold on;
@@ -85,5 +126,10 @@ end
     Z_step(:,3)=Z0*(1+step_out(:,3))./(1-step_out(:,3));
     Z_step(:,4)=Z0*(1+step_out(:,4))./(1-step_out(:,4));
     Z_step(:,5)=Z0*(1+step_out(:,5))./(1-step_out(:,5));
-    
+%     
+%     
+%     %%
+%     
+%     figure(5)
+%     plot(Z_step(:,4))
 end
