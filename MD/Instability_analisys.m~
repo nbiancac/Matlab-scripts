@@ -766,7 +766,6 @@ if flagsave
     hgexport(gcf, [ResultDir,name,'.pdf'],s,'Format','pdf');
     hgexport(gcf, [ResultDir,name,'.png'],s,'Format','png');
 end
-
 %%
 
 flagsave=1;
