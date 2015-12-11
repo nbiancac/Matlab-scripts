@@ -1,5 +1,5 @@
 function Zleff=Zl_eff(freq,Z,machine,l,type,tol)
-% Zl_eff(freq,Z,f0,Qs,l,'type')
+% Zl_eff(freq,Z,machine,l,type,tol)
 clight = constants('clight');
 Qs=machine.Qs;
 taub=machine.taub;

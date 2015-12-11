@@ -2,7 +2,7 @@ function [names1,gaps1,betx1,bety1,nsig1,angle1]=read_coll_file(filepath,type,re
 
 % reads collimator files for LHC and HLLHC and gives back name, gap and
 % beta functions:
-% [names1,gaps1,betx1,bety1]=read_coll_file(filepath)
+% function [names1,gaps1,betx1,bety1,nsig1,angle1]=read_coll_file(filepath,type,repeat)
 
     fid=fopen([filepath]);
     tline = fgetl(fid);
@@ -15,7 +15,7 @@ function [names1,gaps1,betx1,bety1,nsig1,angle1]=read_coll_file(filepath,type,re
     angle_ind=find(ismember(header_vec,'Angle[rad]'));
     material_ind=find(strcmp(header_vec,'Material'));
     gap_ind=find(strcmp(header_vec,'Halfgap[m]'));
-    header_vec
+%     header_vec
     index=(strfind(header_vec,'nsig'));
     nsig_ind=find(~cellfun(@isempty,index));
     
