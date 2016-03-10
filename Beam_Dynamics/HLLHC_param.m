@@ -12,7 +12,7 @@ if E==7e12
         HLLHC.sigmaz=(1.08e-9/4)*constants('clight'); % rms
         HLLHC.V=16e6;
         HLLHC.scenario={scenario};
-        HLLHC.en=2.5e-6;
+        HLLHC.en=2.5;
         HLLHC.betavy=71.5255;
         HLLHC.betavx=65.9756;
     elseif strcmp(scenario,'HL-LHC BCMS')
@@ -21,7 +21,7 @@ if E==7e12
         HLLHC.M=2604;
         HLLHC.sigmaz=(1.08e-9/4)*constants('clight'); % rms
         HLLHC.V=16e6;
-        HLLHC.en=1.7e-6;
+        HLLHC.en=2.5;
         HLLHC.scenario={scenario};
     elseif strcmp(scenario,'HL-LHC 8b+4e')
         HLLHC.Estr='7TeV';
@@ -30,6 +30,7 @@ if E==7e12
         HLLHC.sigmaz=(1.08e-9/4)*constants('clight'); % rms        
         HLLHC.V=16e6;
         HLLHC.en=2.2e-6;
+        HLLHC.en_inj=1.7;
         HLLHC.scenario={scenario};
     end
 elseif E==450e9
@@ -47,7 +48,7 @@ elseif E==450e9
         HLLHC.M=2604;
         HLLHC.sigmaz=(1.08e-9/4)*constants('clight'); % rms
         HLLHC.V=6e6;
-        HLLHC.en=1.4; %micron normalized emittance
+        HLLHC.en=1.7; %micron normalized emittance
         HLLHC.scenario={scenario};
      elseif strcmp(scenario,'HL-LHC 8b+4e')
         HLLHC.Estr='450GeV';
