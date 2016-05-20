@@ -39,8 +39,9 @@ if strcmp(type,'Gaussian')
     
     Pmax=floor(omega_extr/omega_0); % approx value for max intergation;
     p=-Pmax:Pmax;
+    p(p==0)
     omega_p=p*omega_0+l*omega_s;
-
+    
     omega_p=unique(omega_p);
     h_p=interp1(omega,h,omega_p);
     Z_p=interp1(omega,z,omega_p);

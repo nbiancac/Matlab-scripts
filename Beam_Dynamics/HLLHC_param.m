@@ -21,15 +21,15 @@ if E==7e12
         HLLHC.M=2604;
         HLLHC.sigmaz=(1.08e-9/4)*constants('clight'); % rms
         HLLHC.V=16e6;
-        HLLHC.en=2.5;
+        HLLHC.en=1.7;
         HLLHC.scenario={scenario};
     elseif strcmp(scenario,'HL-LHC 8b+4e')
         HLLHC.Estr='7TeV';
-        HLLHC.Nb=2.2e11;
+        HLLHC.Nb=2.3e11;
         HLLHC.M=1968;
         HLLHC.sigmaz=(1.08e-9/4)*constants('clight'); % rms        
         HLLHC.V=16e6;
-        HLLHC.en=2.2e-6;
+        HLLHC.en=2.2;
         HLLHC.en_inj=1.7;
         HLLHC.scenario={scenario};
     end
@@ -72,8 +72,8 @@ HLLHC.beta=sqrt(1.-1./(HLLHC.gamma^2));
 HLLHC.taub=HLLHC.sigmaz/HLLHC.beta/c; % rms bunch length
 HLLHC.circ=26658.883; % total circumference in m
 HLLHC.R=HLLHC.circ/(2.*pi); % machine radius
-HLLHC.Qx=64.31;HLLHC.Qxfrac=HLLHC.Qx-floor(HLLHC.Qx);
-HLLHC.Qy=59.32;HLLHC.Qyfrac=HLLHC.Qy-floor(HLLHC.Qy);
+HLLHC.Qx=62.31;HLLHC.Qxfrac=HLLHC.Qx-floor(HLLHC.Qx);
+HLLHC.Qy=60.32;HLLHC.Qyfrac=HLLHC.Qy-floor(HLLHC.Qy);
 HLLHC.alphap=3.225e-4; % momentum compaction factor
 HLLHC.eta=HLLHC.alphap-1./(HLLHC.gamma^2); % slip factor
 HLLHC.gammatr=sqrt(abs(1/HLLHC.alphap));

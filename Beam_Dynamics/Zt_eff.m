@@ -56,21 +56,30 @@ if strcmp(type,'Gaussian')
     inddel=[ind0;indnan];
     omega(inddel)=[];    f(inddel)=[];    z(inddel)=[];    h(inddel)=[];
     
+    
     if strcmp(spec,'h_range')
-        omega_part=omega(omega>omega_xi);
-        h_part=h(omega>omega_xi);
-        [max_h,max_ind]=max(h_part);
-        omega_max=omega_part(max_ind);
-        h_part2=h_part(omega_part>omega_max);
-        omega_part2=omega_part(omega_part>omega_max);
-        [h_part2,ind]=unique(h_part2); % delete trailed zeros;
-        omega_part2=omega_part2(ind);
-        omega_extr=interp1(h_part2,omega_part2,nperc/100*max_h);
-        f_extr=omega_extr/2/pi;
-        Pmax=floor((omega_extr-(nx+tune+m*tunes)*omega_0)/(M*omega_0)); % approx value for max intergation;
-        disp(['Pmax=',num2str(Pmax)])
+%         omega_part=omega(omega>omega_xi);
+%         h_part=h(omega>omega_xi);
+%         [max_h,max_ind]=max(h_part);
+%         omega_max=omega_part(max_ind);
+%         h_part2=h_part(omega_part>omega_max);
+%         omega_part2=omega_part(omega_part>omega_max);
+%         [h_part2,ind]=unique(h_part2); % delete trailed zeros;
+%         omega_part2=omega_part2(ind);
+%         omega_extr=interp1(h_part2,omega_part2,nperc/100*max_h);
+           idx = find(diff(h >= nperc/100*max(h)));
+           x2 = h(idx) + (nperc/100*max(h) - h(idx)) .* (h(idx+1) - h(idx)) ./ (h(idx+1) - h(idx));
+           
+           omega_extr_up=max(omega(idx));
+           omega_extr_down=min(omega(idx));
+
+            f_extr_up=omega_extr_up/2/pi;
+            f_extr_down=omega_extr_down/2/pi;
+            Pmax=floor((omega_extr_up-(nx+tune+m*tunes)*omega_0)/(M*omega_0)); % approx value for max intergation;
+            Pmin=floor((omega_extr_down-(nx+tune+m*tunes)*omega_0)/(M*omega_0)); % approx value for max intergation;
+%         disp(['Pmax=',num2str(Pmax)])
         if Pmax>1e6; error('max Pmax is > 1e6'); end
-        p_prime=-Pmax:Pmax;
+        p_prime=Pmin:Pmax;
         omega_p=(nx+p_prime*M+tune)*omega_0+m*omega_s;   
     elseif strcmp(spec,'z_range')
         omega_part=omega(omega>0);
@@ -99,8 +108,8 @@ if strcmp(type,'Gaussian')
     end
     
     kick_f=trapz(f,z.*h);    
-    h_p=interp1(omega,h,omega_p);
-    Z_p=interp1(omega,z,omega_p);
+    h_p=interp1(omega,h,omega_p,'linear');
+    Z_p=interp1(omega,z,omega_p,'linear');
     N=(Z_p).*h_p;
     
     %   
@@ -112,20 +121,19 @@ if strcmp(type,'Gaussian')
     inddel=[ind0;indnan];
     omega(inddel)=[];    f(inddel)=[];    z(inddel)=[];    h(inddel)=[];
     
-    omega_part=omega(omega>omega_xi);
-    h_part=h(omega>omega_xi);
-    [max_h,max_ind]=max(h_part);
-    omega_max=omega_part(max_ind);
-    h_part2=h_part(omega_part>omega_max);
-    omega_part2=omega_part(omega_part>omega_max);
-    [h_part2,ind]=unique(h_part2);
-    omega_part2=omega_part2(ind);
-    omega_extr=interp1(h_part2,omega_part2,nperc/100*max_h);
-    f_extr=omega_extr/2/pi;
-    Pmax=floor((omega_extr-(nx+tune+m*tunes)*omega_0)/(M*omega_0)); % approx value for max intergation;
-    disp(['Pmax=',num2str(Pmax)])
+    idx = find(diff(h >= nperc/100*max(h)));
+    x2 = h(idx) + (nperc/100*max(h) - h(idx)) .* (h(idx+1) - h(idx)) ./ (h(idx+1) - h(idx));
+
+    omega_extr_up=max(omega(idx));
+    omega_extr_down=min(omega(idx));
+
+    f_extr_up=omega_extr_up/2/pi;
+    f_extr_down=omega_extr_down/2/pi;
+    Pmax=floor((omega_extr_up-(nx+tune+m*tunes)*omega_0)/(M*omega_0)); % approx value for max intergation;
+    Pmin=floor((omega_extr_down-(nx+tune+m*tunes)*omega_0)/(M*omega_0)); % approx value for max intergation;
+    %         disp(['Pmax=',num2str(Pmax)])
     if Pmax>1e6; error('max Pmax is > 1e6'); end
-    p_prime=-Pmax:Pmax;
+    p_prime=Pmin:Pmax;
     omega_p2=(nx+p_prime*M+tune)*omega_0+m*omega_s;
     h_p2=interp1(omega,h,omega_p2);
     D=h_p2;

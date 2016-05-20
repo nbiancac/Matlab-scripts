@@ -1,4 +1,4 @@
-function [ploss,kloss]=power_loss(freq,Zlong,machine,tol,flagshow)
+function [ploss,kloss,spectrum]=power_loss(freq,Zlong,machine,tol,flagshow)
               
 %%%%%%%%
 % Calculates power loss [W] and loss factor in [Ohm/C]
@@ -59,6 +59,6 @@ sum_impspec=sum(Zlong_sample.*powspec_sample);
 % sum_impspec=trapz(freq,real(Zlong).*powspec)/M/frev;
 ploss=2*(e*M*Nb*frev)^2*sum_impspec;
 kloss=1/pi*trapz(omega,real(Zlong).*powspec);
-
+spectrum=[omega, powspec];
 end
 
